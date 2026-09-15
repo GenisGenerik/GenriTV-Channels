@@ -10,6 +10,9 @@ import com.example.genritv.data.VodRepository
 import com.example.genritv.model.Series
 import com.example.genritv.model.TvChannel
 import com.example.genritv.model.VodMovie
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -27,6 +30,8 @@ class HomeViewModel : ViewModel() {
     private val _series = MutableStateFlow<List<Series>>(emptyList())
     private val _searchQuery = MutableStateFlow("")
     private val _selectedCategory = MutableStateFlow(HomeCategory.HOME)
+    private var loadJob: Job? = null
+    private var hasLoadedSuccessfully = false
 
     val searchQuery: StateFlow<String> = _searchQuery
     val selectedCategory: StateFlow<HomeCategory> = _selectedCategory
@@ -77,17 +82,28 @@ class HomeViewModel : ViewModel() {
     )
 
     fun loadData(context: Context) {
-        viewModelScope.launch {
+        if (hasLoadedSuccessfully || loadJob?.isActive == true) return
+
+        loadJob = viewModelScope.launch {
             runCatching {
-                Triple(
-                    UnifiedChannelRepository.loadChannels(context.applicationContext),
-                    VodRepository.getMovies(),
-                    SeriesRepository.getSeries()
-                )
+                coroutineScope {
+                    val channelsDeferred = async {
+                        UnifiedChannelRepository.loadChannels(context.applicationContext)
+                    }
+                    val moviesDeferred = async { VodRepository.getMovies() }
+                    val seriesDeferred = async { SeriesRepository.getSeries() }
+
+                    Triple(
+                        channelsDeferred.await(),
+                        moviesDeferred.await(),
+                        seriesDeferred.await()
+                    )
+                }
             }.onSuccess { (channels, movies, series) ->
                 _channels.value = channels
                 _movies.value = movies
                 _series.value = series
+                hasLoadedSuccessfully = true
             }
         }
     }
