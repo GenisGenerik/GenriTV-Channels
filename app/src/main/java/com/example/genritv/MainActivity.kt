@@ -16,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.genritv.data.UnifiedChannelRepository
 import com.example.genritv.model.TvChannel
 import com.example.genritv.ui.PlayerScreen
+import com.example.genritv.ui.PlayerState
 import com.example.genritv.ui.PlayerViewModel
 import com.example.genritv.ui.TVNavigation
 import kotlinx.coroutines.Job
@@ -43,7 +44,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         playerViewModel = ViewModelProvider(this)[PlayerViewModel::class.java]
 
         lifecycleScope.launch {
@@ -65,6 +65,7 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val player = playerViewModel.player
             val playerState by playerViewModel.playerState.collectAsStateWithLifecycle()
+            val playerErrorMessage = (playerState as? PlayerState.Error)?.message
 
             DisposableEffect(navController) {
                 val listener = androidx.navigation.NavController.OnDestinationChangedListener { _, destination, _ ->
@@ -105,17 +106,16 @@ class MainActivity : ComponentActivity() {
                         channelName = currentChannelName,
                         channelLogo = currentChannelLogo,
                         showChannelName = showChannelName,
-                        isLoading = playerState is com.example.genritv.ui.PlayerState.Buffering,
+                        isLoading = playerState is PlayerState.Buffering,
                         currentTime = player.currentPosition.coerceAtLeast(0L).toString(),
-                        showError = playerState is com.example.genritv.ui.PlayerState.Error,
+                        showError = playerState is PlayerState.Error,
+                        errorMessage = playerErrorMessage,
                         currentMode = currentMode,
                         isPlaying = player.isPlaying,
                         position = player.currentPosition.coerceAtLeast(0L),
                         duration = player.duration.coerceAtLeast(0L),
                         resizeMode = resizeMode,
-                        onRetry = {
-                            playerViewModel.retryPlayback()
-                        }
+                        onRetry = { playerViewModel.retryPlayback() }
                     )
                 }
             )
@@ -181,23 +181,17 @@ class MainActivity : ComponentActivity() {
 
     override fun onPause() {
         super.onPause()
-        if (::playerViewModel.isInitialized) {
-            playerViewModel.player.pause()
-        }
+        if (::playerViewModel.isInitialized) playerViewModel.player.pause()
     }
 
     override fun onStop() {
         super.onStop()
-        if (::playerViewModel.isInitialized) {
-            playerViewModel.player.stop()
-        }
+        if (::playerViewModel.isInitialized) playerViewModel.player.stop()
     }
 
     override fun onDestroy() {
         hideChannelJob?.cancel()
-        if (::playerViewModel.isInitialized) {
-            playerViewModel.releasePlayer()
-        }
+        if (::playerViewModel.isInitialized) playerViewModel.releasePlayer()
         super.onDestroy()
     }
 }
