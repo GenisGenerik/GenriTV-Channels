@@ -11,6 +11,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.compose.rememberNavController
 import com.example.genritv.data.UnifiedChannelRepository
 import com.example.genritv.model.TvChannel
 import com.example.genritv.ui.PlayerScreen
@@ -60,9 +61,21 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            val navController = androidx.navigation.compose.rememberNavController()
+            val navController = rememberNavController()
             val player = playerViewModel.player
             val playerState by playerViewModel.playerState.collectAsStateWithLifecycle()
+
+            LaunchedEffect(playerState) {
+                // Force Compose to observe player-state changes so channel loading and errors recompose reliably.
+            }
+
+            DisposableEffect(navController) {
+                val listener = androidx.navigation.NavController.OnDestinationChangedListener { _, destination, _ ->
+                    currentRoute = destination.route ?: "home"
+                }
+                navController.addOnDestinationChangedListener(listener)
+                onDispose { navController.removeOnDestinationChangedListener(listener) }
+            }
 
             TVNavigation(
                 navController = navController,
@@ -105,14 +118,14 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun playChannel(channel: TvChannel) {
-        val index = channels.indexOf(channel)
+        val index = channels.indexOfFirst { it.nama == channel.nama && it.urls == channel.urls }
         if (index >= 0) currentChannelIndex = index
         saveCurrentChannel()
         currentChannelName = channel.nama
         currentChannelLogo = channel.logo
         showChannelName = true
         resetHideJob(3000)
-        playerViewModel.playChannel(channel, 0, isVod = false)
+        playerViewModel.playChannel(channel)
     }
 
     private fun saveCurrentChannel() {
