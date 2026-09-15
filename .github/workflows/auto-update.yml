@@ -28,17 +28,16 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           
-          # Force synchronization with remote
-          git fetch origin main
-          git reset --hard origin/main
-          
-          # Tambahkan perubahan
+          # Tambahkan perubahan dari hasil generate pipeline terlebih dahulu
           git add generated/
           
-          # Cek apakah ada perubahan
+          # Cek apakah ada perubahan yang perlu di-commit
           if git diff --quiet && git diff --cached --quiet; then
             echo "No changes to commit."
           else
             git commit -m "Auto-update IPTV playlist"
+            
+            # Tarik perubahan remote dengan rebase jika ada pembaruan di server, lalu push
+            git pull origin main --rebase || true
             git push origin main
           fi
