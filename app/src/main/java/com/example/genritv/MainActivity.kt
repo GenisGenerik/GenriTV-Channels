@@ -4,13 +4,14 @@ import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.BackHandler
+import androidx.activity.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.navigation.compose.rememberNavController
 import com.example.genritv.data.UnifiedChannelRepository
@@ -64,7 +65,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navController = rememberNavController()
             val player = playerViewModel.player
-            val playerState by playerViewModel.playerState.collectAsStateCompat()
+            val playerState by playerViewModel.playerState.collectAsStateWithLifecycle()
 
             BackHandler(enabled = true) {
                 if (currentRoute == "player") {
@@ -105,7 +106,7 @@ class MainActivity : ComponentActivity() {
                         channelLogo = currentChannelLogo,
                         showChannelName = showChannelName,
                         isLoading = playerState is com.example.genritv.ui.PlayerState.Buffering,
-                        currentTime = player.currentPosition.coerceAtLeast(0L),
+                        currentTime = player.currentPosition.coerceAtLeast(0L).toString(),
                         showError = playerState is com.example.genritv.ui.PlayerState.Error,
                         currentMode = currentMode,
                         isPlaying = player.isPlaying,
@@ -202,7 +203,3 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
     }
 }
-
-@androidx.compose.runtime.Composable
-private fun <T> kotlinx.coroutines.flow.StateFlow<T>.collectAsStateCompat(): androidx.compose.runtime.State<T> =
-    androidx.lifecycle.compose.collectAsStateWithLifecycle(this)
