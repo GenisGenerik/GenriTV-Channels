@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.example.genritv"
-    compileSdk = 37
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.genritv"
@@ -42,7 +42,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.tv.foundation)
     implementation(libs.androidx.tv.material)
-    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material3:material3:1.3.1")
     implementation(libs.google.gson)
     implementation(libs.androidx.media3.exoplayer.hls)
     implementation(libs.kotlinx.coroutines.android)
@@ -53,6 +53,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)
-    implementation("androidx.navigation:navigation-compose:2.8.0")
-    implementation("androidx.compose.material:material-icons-extended")
+    implementation(libs.okhttp)
+    implementation("androidx.navigation:navigation-compose:2.8.5")
+    implementation("androidx.compose.material:material-icons-extended:1.7.6")
 }

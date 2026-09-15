@@ -2,7 +2,7 @@ package com.example.genritv.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.genritv.data.M3uRepository
+import com.example.genritv.data.UnifiedChannelRepository
 import com.example.genritv.data.SeriesRepository
 import com.example.genritv.data.VodRepository
 import com.example.genritv.model.Series
@@ -68,7 +68,7 @@ class HomeViewModel : ViewModel() {
 
     fun loadData(context: Context) {
         viewModelScope.launch {
-            _channels.value = M3uRepository.loadChannels(context)
+            _channels.value = UnifiedChannelRepository.loadChannels(context)
             _movies.value = VodRepository.getMovies()
             _series.value = SeriesRepository.getSeries()
         }
