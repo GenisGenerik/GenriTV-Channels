@@ -11,8 +11,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.media3.ui.AspectRatioFrameLayout
-import androidx.navigation.compose.rememberNavController
 import com.example.genritv.data.UnifiedChannelRepository
 import com.example.genritv.model.TvChannel
 import com.example.genritv.ui.PlayerScreen
@@ -39,7 +37,7 @@ class MainActivity : ComponentActivity() {
     private var currentChannelIndex by mutableStateOf(0)
     private var showChannelName by mutableStateOf(false)
     private var hideChannelJob: Job? = null
-    private var resizeMode by mutableStateOf(AspectRatioFrameLayout.RESIZE_MODE_FIT)
+    private var resizeMode by mutableStateOf(0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +60,7 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            val navController = rememberNavController()
+            val navController = androidx.navigation.compose.rememberNavController()
             val player = playerViewModel.player
             val playerState by playerViewModel.playerState.collectAsStateWithLifecycle()
 
