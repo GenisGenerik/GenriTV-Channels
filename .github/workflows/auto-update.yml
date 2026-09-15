@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Pastikan seluruh histori diambil agar rebase/push bekerja
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -23,11 +25,25 @@ jobs:
         run: python scripts/pipeline.py
         env:
           PLAYLIST_SOURCE: ${{ secrets.PLAYLIST_SOURCE }}
-      - name: Commit changes
+      - name: Commit and Push changes
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          
+          # Konfigurasi remote untuk memastikan push dilakukan ke branch yang benar
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          
           git add generated/
-          git commit -m "Auto-update IPTV playlist" || echo "No changes to commit"
-          git pull --rebase origin main
-          git push origin main
+          
+          # Cek apakah ada perubahan
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Auto-update IPTV playlist"
+            
+            # Tarik perubahan terbaru dari remote untuk menghindari konflik
+            git pull --rebase origin main
+            
+            # Push perubahan
+            git push origin main
+          fi
