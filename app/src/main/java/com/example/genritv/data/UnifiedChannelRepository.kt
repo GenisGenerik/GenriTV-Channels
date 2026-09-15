@@ -8,6 +8,8 @@ import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -28,6 +30,9 @@ object UnifiedChannelRepository {
     private const val CACHE_TTL_MS = 6L * 60L * 60L * 1000L
 
     private val gson = Gson()
+    private val loadMutex = Mutex()
+    private var inMemoryChannels: List<TvChannel>? = null
+
     private val client = OkHttpClient.Builder()
         .connectTimeout(10, TimeUnit.SECONDS)
         .readTimeout(15, TimeUnit.SECONDS)
@@ -36,38 +41,57 @@ object UnifiedChannelRepository {
 
     suspend fun loadChannels(context: Context, forceRefresh: Boolean = false): List<TvChannel> =
         withContext(Dispatchers.IO) {
-            val cacheFile = File(context.filesDir, CACHE_FILE_NAME)
-            val timestampFile = File(context.filesDir, CACHE_TIMESTAMP_FILE_NAME)
-
-            if (!forceRefresh && isCacheFresh(cacheFile, timestampFile)) {
-                loadFromCache(cacheFile).takeIf { it.size >= MIN_CHANNELS }?.let {
-                    Log.d(TAG, "Using fresh channel cache: ${it.size}")
+            if (!forceRefresh) {
+                inMemoryChannels?.takeIf { it.size >= MIN_CHANNELS }?.let {
+                    Log.d(TAG, "Using in-memory channel cache: ${it.size}")
                     return@withContext it
                 }
             }
 
-            val remoteChannels = fetchRemoteChannels()
-            if (remoteChannels.size >= MIN_CHANNELS) {
-                saveToCache(cacheFile, timestampFile, remoteChannels)
-                return@withContext remoteChannels
-            }
-
-            val cachedChannels = loadFromCache(cacheFile)
-            if (cachedChannels.size >= MIN_CHANNELS) {
-                Log.w(TAG, "Using stale cached channels: ${cachedChannels.size}")
-                return@withContext cachedChannels
-            }
-
-            try {
-                JsonHelper.loadChannels(context).takeIf { it.size >= MIN_CHANNELS }?.also {
-                    Log.w(TAG, "Using bundled channels: ${it.size}")
-                    return@withContext it
+            loadMutex.withLock {
+                if (!forceRefresh) {
+                    inMemoryChannels?.takeIf { it.size >= MIN_CHANNELS }?.let {
+                        return@withLock it
+                    }
                 }
-            } catch (e: Exception) {
-                Log.e(TAG, "Bundled channel source failed", e)
-            }
 
-            emptyList()
+                val cacheFile = File(context.filesDir, CACHE_FILE_NAME)
+                val timestampFile = File(context.filesDir, CACHE_TIMESTAMP_FILE_NAME)
+
+                if (!forceRefresh && isCacheFresh(cacheFile, timestampFile)) {
+                    loadFromCache(cacheFile).takeIf { it.size >= MIN_CHANNELS }?.let {
+                        inMemoryChannels = it
+                        Log.d(TAG, "Using fresh channel cache: ${it.size}")
+                        return@withLock it
+                    }
+                }
+
+                val remoteChannels = fetchRemoteChannels()
+                if (remoteChannels.size >= MIN_CHANNELS) {
+                    saveToCache(cacheFile, timestampFile, remoteChannels)
+                    inMemoryChannels = remoteChannels
+                    return@withLock remoteChannels
+                }
+
+                val cachedChannels = loadFromCache(cacheFile)
+                if (cachedChannels.size >= MIN_CHANNELS) {
+                    inMemoryChannels = cachedChannels
+                    Log.w(TAG, "Using stale cached channels: ${cachedChannels.size}")
+                    return@withLock cachedChannels
+                }
+
+                try {
+                    JsonHelper.loadChannels(context).takeIf { it.size >= MIN_CHANNELS }?.also {
+                        inMemoryChannels = it
+                        Log.w(TAG, "Using bundled channels: ${it.size}")
+                        return@withLock it
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Bundled channel source failed", e)
+                }
+
+                return@withLock emptyList()
+            }
         }
 
     private suspend fun fetchRemoteChannels(): List<TvChannel> {
