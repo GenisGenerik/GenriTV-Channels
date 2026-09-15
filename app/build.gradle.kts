@@ -64,6 +64,8 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.8.5")
     implementation("androidx.compose.material:material-icons-extended:1.7.6")
 
+    testImplementation("junit:junit:4.13.2")
+
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation("androidx.test:runner:1.6.2")
