@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-
 @OptIn(UnstableApi::class)
 class PlayerViewModel(private val application: Application) : AndroidViewModel(application) {
 
@@ -41,10 +40,10 @@ class PlayerViewModel(private val application: Application) : AndroidViewModel(a
         }
         val loadControl = DefaultLoadControl.Builder()
             .setBufferDurationsMs(
-                15_000,
-                50_000,
-                1_500,
-                3_000
+                5_000,
+                20_000,
+                750,
+                1_500
             )
             .build()
 
@@ -140,10 +139,17 @@ class PlayerViewModel(private val application: Application) : AndroidViewModel(a
         }
 
         currentUrlIndex = urlIndex
-        player.setMediaItem(MediaItem.fromUri(urls[urlIndex]))
-        player.prepare()
-        player.playWhenReady = true
-        _playerState.value = PlayerState.Buffering
+        try {
+            player.setMediaItem(MediaItem.fromUri(urls[urlIndex]))
+            player.prepare()
+            player.playWhenReady = true
+            _playerState.value = PlayerState.Buffering
+        } catch (e: RuntimeException) {
+            telemetry.onPlaybackError(PlaybackException.ERROR_CODE_UNSPECIFIED, e.message)
+            _playerState.value = PlayerState.Error(
+                e.message ?: "Format stream tidak didukung"
+            )
+        }
     }
 
     private fun currentPlayableUrlsFromCurrentMedia(): List<String> =
@@ -175,16 +181,6 @@ class PlayerViewModel(private val application: Application) : AndroidViewModel(a
         val urls = channel?.urls.orEmpty().filter(StreamUrlValidator::isPlayableHttpUrl)
         return urls.indices.firstOrNull { it > currentIndex }
     }
-
-//    fun playFallback(channel: TvChannel): Boolean {
-//        if (channel.urls.isEmpty()) {
-//            _playerState.value = PlayerState.Error("No stream URLs available")
-//            return false
-//        }
-//        currentUrlIndex = 0
-//        playChannel(channel, 0)
-//        return true
-//    }
 
     fun releasePlayer() {
         _player?.release()
