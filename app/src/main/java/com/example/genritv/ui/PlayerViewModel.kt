@@ -5,8 +5,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
-import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.DefaultLoadControl
+import androidx.media3.exoplayer.ExoPlayer
 import com.example.genritv.model.TvChannel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,14 +26,15 @@ class PlayerViewModel(private val application: Application) : AndroidViewModel(a
     private var isVodMode = false
 
     private fun createPlayer(isVod: Boolean): ExoPlayer {
-        val loadControl = DefaultLoadControl.Builder()
-            .setBufferParameters(
-                if (isVod) 30_000 else 5_000,
-                if (isVod) 60_000 else 15_000,
-                2_500,
-                5_000
-            )
-            .build()
+        val loadControl = if (isVod) {
+            DefaultLoadControl.Builder()
+                .setBufferDurationsMs(30_000, 60_000, 2_500, 5_000)
+                .build()
+        } else {
+            DefaultLoadControl.Builder()
+                .setBufferDurationsMs(5_000, 15_000, 1_500, 2_500)
+                .build()
+        }
 
         return ExoPlayer.Builder(application)
             .setLoadControl(loadControl)
@@ -91,9 +92,13 @@ class PlayerViewModel(private val application: Application) : AndroidViewModel(a
     }
 
     fun playFallback(channel: TvChannel): Boolean {
+        if (channel.urls.isEmpty()) {
+            _playerState.value = PlayerState.Error("No stream URLs available")
+            return false
+        }
         currentUrlIndex = 0
         playChannel(channel, 0, isVodMode)
-        return channel.urls.isNotEmpty()
+        return true
     }
 
     fun releasePlayer() {
