@@ -5,15 +5,20 @@ import android.util.Log
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.onDispose
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.example.genritv.data.UnifiedChannelRepository
+import com.example.genritv.model.Series
 import com.example.genritv.model.TvChannel
+import com.example.genritv.model.VodMovie
 import com.example.genritv.ui.PlayerScreen
 import com.example.genritv.ui.PlayerViewModel
 import com.example.genritv.ui.TVNavigation
@@ -66,7 +71,7 @@ class MainActivity : ComponentActivity() {
             val playerState by playerViewModel.playerState.collectAsStateWithLifecycle()
 
             LaunchedEffect(playerState) {
-                // Force Compose to observe player-state changes so channel loading and errors recompose reliably.
+                // Keep the player UI subscribed to state changes from Media3.
             }
 
             DisposableEffect(navController) {
@@ -84,12 +89,22 @@ class MainActivity : ComponentActivity() {
                     playChannel(channel)
                     navController.navigate("player")
                 },
-                onNavigateToMovies = {
+                onNavigateToMovies = { movie ->
                     currentMode = AppMode.VOD
+                    currentChannelName = movie.title
+                    currentChannelLogo = movie.logo
+                    showChannelName = true
+                    resetHideJob(3000)
+                    playerViewModel.playMovie(movie)
                     navController.navigate("player")
                 },
-                onNavigateToSeries = {
+                onNavigateToSeries = { series ->
                     currentMode = AppMode.SERIES
+                    currentChannelName = series.title
+                    currentChannelLogo = series.logo
+                    showChannelName = true
+                    resetHideJob(3000)
+                    playerViewModel.playSeries(series)
                     navController.navigate("player")
                 },
                 playerScreen = {
@@ -107,8 +122,9 @@ class MainActivity : ComponentActivity() {
                         duration = player.duration.coerceAtLeast(0L),
                         resizeMode = resizeMode,
                         onRetry = {
-                            if (currentMode == AppMode.CHANNELS) {
-                                playerViewModel.retryPlayback()
+                            when (currentMode) {
+                                AppMode.CHANNELS -> playerViewModel.retryPlayback()
+                                AppMode.VOD, AppMode.SERIES -> playerViewModel.retryPlayback()
                             }
                         }
                     )
