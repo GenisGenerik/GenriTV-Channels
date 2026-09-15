@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
                 navController = navController,
                 onNavigateToLiveTv = { channel ->
                     currentMode = AppMode.CHANNELS
-                    playerViewModel.playChannel(channel, isVod = false)
+                    playerViewModel.playChannel(channel)
                     navController.navigate("player")
                 },
                 onNavigateToMovies = { _ ->
@@ -137,7 +137,7 @@ class MainActivity : ComponentActivity() {
         val channel = channels.getOrNull(channelIndex) ?: return
         currentChannelName = channel.nama
         currentChannelLogo = channel.logo
-        playerViewModel.playChannel(channel, urlIndex, currentMode != AppMode.CHANNELS)
+        playerViewModel.playChannel(channel, urlIndex)
     }
 
     override fun onDestroy() {
