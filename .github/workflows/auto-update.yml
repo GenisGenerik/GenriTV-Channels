@@ -17,9 +17,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: main
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -35,9 +37,11 @@ jobs:
           PLAYLIST_SOURCE: ${{ secrets.PLAYLIST_SOURCE }}
 
       - name: Commit and Push changes
+        shell: bash
         run: |
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@github.com'
+          set -e
+          git config user.name 'github-actions'
+          git config user.email 'github-actions@github.com'
 
           git add generated/
 
@@ -48,5 +52,26 @@ jobs:
 
           git commit -m 'Auto-update IPTV playlist'
 
-          git pull --rebase origin main
-          git push origin main
+          for attempt in 1 2 3; do
+            echo "Push attempt $attempt..."
+            git fetch origin main
+            git rebase origin/main || {
+              echo 'Rebase failed. Aborting rebase.'
+              git rebase --abort || true
+              exit 1
+            }
+
+            if git push origin HEAD:main; then
+              echo 'Push succeeded.'
+              exit 0
+            fi
+
+            if [ "$attempt" -lt 3 ]; then
+              echo 'Push was rejected; retrying with latest remote state...'
+              git fetch origin main
+              git rebase origin/main
+            fi
+          done
+
+          echo 'Push failed after 3 attempts.'
+          exit 1
