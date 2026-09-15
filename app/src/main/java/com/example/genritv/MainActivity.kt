@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -15,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.genritv.data.UnifiedChannelRepository
 import com.example.genritv.model.TvChannel
 import com.example.genritv.ui.PlayerScreen
+import com.example.genritv.ui.PlayerState
 import com.example.genritv.ui.PlayerViewModel
 import com.example.genritv.ui.TVNavigation
 import kotlinx.coroutines.Job
@@ -65,6 +67,15 @@ class MainActivity : ComponentActivity() {
             val player = playerViewModel.player
             val playerState by playerViewModel.playerState.collectAsStateWithLifecycle()
 
+            DisposableEffect(navController) {
+                val listener = androidx.navigation.NavController.OnDestinationChangedListener { _, destination, _ ->
+                    currentRoute = destination.route ?: "home"
+                }
+                navController.addOnDestinationChangedListener(listener)
+                currentRoute = navController.currentDestination?.route ?: "home"
+                onDispose { navController.removeOnDestinationChangedListener(listener) }
+            }
+
             TVNavigation(
                 navController = navController,
                 onNavigateToLiveTv = { channel ->
@@ -85,11 +96,13 @@ class MainActivity : ComponentActivity() {
                         player = player,
                         channelName = currentChannelName,
                         channelLogo = currentChannelLogo,
+                        channelIndex = currentChannelIndex,
+                        channelCount = channels.size,
                         showChannelName = showChannelName,
-                        isLoading = playerState is com.example.genritv.ui.PlayerState.Buffering,
+                        isLoading = playerState is PlayerState.Buffering,
                         currentTime = player.currentPosition.coerceAtLeast(0L).toString(),
-                        showError = playerState is com.example.genritv.ui.PlayerState.Error,
-                        errorMessage = if (playerState is com.example.genritv.ui.PlayerState.Error) (playerState as com.example.genritv.ui.PlayerState.Error).message else null,
+                        showError = playerState is PlayerState.Error,
+                        errorMessage = if (playerState is PlayerState.Error) (playerState as PlayerState.Error).message else null,
                         currentMode = currentMode,
                         isPlaying = player.isPlaying,
                         position = player.currentPosition.coerceAtLeast(0L),
@@ -99,6 +112,9 @@ class MainActivity : ComponentActivity() {
                             if (currentMode == AppMode.CHANNELS) {
                                 playerViewModel.retryPlayback()
                             }
+                        },
+                        onExit = {
+                            playerViewModel.releasePlayer()
                         }
                     )
                 }
@@ -151,11 +167,13 @@ class MainActivity : ComponentActivity() {
         }
 
         return when (keyCode) {
-            KeyEvent.KEYCODE_DPAD_UP -> {
+            KeyEvent.KEYCODE_DPAD_UP,
+            KeyEvent.KEYCODE_CHANNEL_UP -> {
                 changeChannel(-1)
                 true
             }
-            KeyEvent.KEYCODE_DPAD_DOWN -> {
+            KeyEvent.KEYCODE_DPAD_DOWN,
+            KeyEvent.KEYCODE_CHANNEL_DOWN -> {
                 changeChannel(1)
                 true
             }
