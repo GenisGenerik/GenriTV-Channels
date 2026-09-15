@@ -49,7 +49,6 @@ import androidx.tv.material3.Card
 import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.Border
 import androidx.tv.material3.Surface
-import androidx.tv.material3.SurfaceDefaults
 import androidx.tv.material3.ClickableSurfaceDefaults
 import coil.compose.AsyncImage
 import com.example.genritv.model.Series
@@ -82,7 +81,7 @@ fun HomeScreen(
                 targetValue = if (isExpanded) 280.dp else 80.dp,
                 label = "drawerWidth"
             )
-            
+
             Column(
                 Modifier
                     .fillMaxHeight()
@@ -99,7 +98,7 @@ fun HomeScreen(
                 ) {
                     Text("G", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 24.sp)
                 }
-                
+
                 Spacer(modifier = Modifier.height(48.dp))
 
                 DrawerItem("Home", Icons.Default.Home, selectedCategory == HomeCategory.HOME, isExpanded) {
@@ -117,9 +116,9 @@ fun HomeScreen(
                 DrawerItem("Series", Icons.Default.Tv, selectedCategory == HomeCategory.SERIES, isExpanded) {
                     viewModel.onCategorySelected(HomeCategory.SERIES)
                 }
-                
+
                 Spacer(modifier = Modifier.weight(1f))
-                
+
                 DrawerItem("Settings", Icons.Default.Settings, false, isExpanded) {
                     onNavigateToSettings()
                 }
@@ -157,7 +156,7 @@ fun DrawerItem(
     onClick: () -> Unit
 ) {
     var isFocused by remember { mutableStateOf(false) }
-    
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -179,7 +178,7 @@ fun DrawerItem(
                 tint = if (isSelected) Color.Yellow else if (isFocused) Color.White else Color.White.copy(alpha = 0.7f),
                 modifier = Modifier.size(26.dp)
             )
-            
+
             if (isExpanded) {
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
@@ -217,7 +216,10 @@ fun HomeOverview(
                 contentPadding = PaddingValues(horizontal = 48.dp),
                 horizontalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                items(state.channels.take(12)) { channel ->
+                items(
+                    items = state.channels.take(12),
+                    key = { channel -> channel.uiKey }
+                ) { channel ->
                     PosterCard(
                         title = channel.nama,
                         posterUrl = channel.logo,
@@ -234,7 +236,10 @@ fun HomeOverview(
                 contentPadding = PaddingValues(horizontal = 48.dp),
                 horizontalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                items(state.movies.take(12)) { movie ->
+                items(
+                    items = state.movies.take(12),
+                    key = { movie -> movie.uiKey }
+                ) { movie ->
                     PosterCard(
                         title = movie.title,
                         posterUrl = movie.logo,
@@ -251,7 +256,10 @@ fun HomeOverview(
                 contentPadding = PaddingValues(horizontal = 48.dp),
                 horizontalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                items(state.seriesList.take(12)) { series ->
+                items(
+                    items = state.seriesList.take(12),
+                    key = { series -> series.uiKey }
+                ) { series ->
                     PosterCard(
                         title = series.title,
                         posterUrl = series.logo,
@@ -310,17 +318,26 @@ fun CategoryGridView(
         ) {
             when (state.selectedCategory) {
                 HomeCategory.TV_NASIONAL, HomeCategory.TV_REGIONAL -> {
-                    items(state.channels) { channel ->
+                    items(
+                        items = state.channels,
+                        key = { channel -> channel.uiKey }
+                    ) { channel ->
                         PosterCard(channel.nama, channel.logo, { onNavigateToLiveTv(channel) }, Modifier.fillMaxWidth())
                     }
                 }
                 HomeCategory.MOVIES -> {
-                    items(state.movies) { movie ->
+                    items(
+                        items = state.movies,
+                        key = { movie -> movie.uiKey }
+                    ) { movie ->
                         PosterCard(movie.title, movie.logo, { onNavigateToMovies(movie) }, Modifier.fillMaxWidth())
                     }
                 }
                 HomeCategory.SERIES -> {
-                    items(state.seriesList) { series ->
+                    items(
+                        items = state.seriesList,
+                        key = { series -> series.uiKey }
+                    ) { series ->
                         PosterCard(series.title, series.logo, { onNavigateToSeries(series) }, Modifier.fillMaxWidth())
                     }
                 }
@@ -368,9 +385,9 @@ fun HeroSection(searchQuery: String, onSearchQueryChange: (String) -> Unit) {
                 color = Color.White.copy(alpha = 0.6f),
                 modifier = Modifier.width(600.dp)
             )
-            
+
             Spacer(modifier = Modifier.height(32.dp))
-            
+
             SearchBox(searchQuery, onSearchQueryChange)
         }
     }
@@ -468,15 +485,15 @@ fun PosterCard(title: String, posterUrl: String?, onClick: () -> Unit, modifier:
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = title, 
-                        style = MaterialTheme.typography.labelSmall, 
+                        text = title,
+                        style = MaterialTheme.typography.labelSmall,
                         color = Color.White.copy(alpha = 0.5f),
                         modifier = Modifier.padding(12.dp),
                         textAlign = TextAlign.Center
                     )
                 }
             }
-            
+
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -487,7 +504,7 @@ fun PosterCard(title: String, posterUrl: String?, onClick: () -> Unit, modifier:
                         )
                     )
             )
-            
+
             Text(
                 text = title,
                 modifier = Modifier
@@ -502,6 +519,15 @@ fun PosterCard(title: String, posterUrl: String?, onClick: () -> Unit, modifier:
         }
     }
 }
+
+private val TvChannel.uiKey: String
+    get() = "tv:${tvgId?.takeIf(String::isNotBlank) ?: url.ifBlank { nama.trim().lowercase() }}"
+
+private val VodMovie.uiKey: String
+    get() = "movie:${url.ifBlank { title.trim().lowercase() }}"
+
+private val Series.uiKey: String
+    get() = "series:${logo ?: title.trim().lowercase()}"
 
 @Preview(device = "id:tv_1080p")
 @Composable
