@@ -7,9 +7,11 @@ GenriTV is an Android TV-first streaming application for live TV, movies, and se
 The application follows a layered approach:
 
 - `model/` — domain-facing data models.
-- `data/` — repositories, parsers, source adapters, and caching.
-- `ui/` — Compose TV screens, navigation, and presentation state.
+- `data/` — repositories, parsers, source adapters, validation, and caching.
+- `ui/` — Compose TV screens, navigation, presentation state, and player UI.
+- `observability/` — privacy-safe playback diagnostics.
 - `ui/theme/` — shared visual system.
+- `docs/` — production architecture, release, and integration boundaries.
 
 Keep business rules independent from UI concerns. Prefer small repositories/services over putting data and playback logic into activities or composables.
 
@@ -21,7 +23,7 @@ The roadmap follows the executive brief:
 2. Netflix/Vidio-inspired dark, content-first TV UX with strong focus states.
 3. Search, categories, metadata, watch history, and personalization foundations.
 4. Accessibility, keyboard/remote navigation, subtitles, and localization.
-5. Automated unit/integration testing and CI quality gates.
+5. Automated unit/integration/E2E testing and CI quality gates.
 6. Security, observability, release automation, and production documentation.
 7. Backend/media infrastructure can be introduced separately when premium licensed content requires authentication, tokenized URLs, CDN, DRM, transcoding, or scalable APIs.
 
@@ -36,10 +38,22 @@ Open the project in Android Studio with JDK 17. Run:
 ./gradlew assembleRelease
 ```
 
+For Android TV instrumentation tests on a connected/emulated device:
+
+```bash
+./gradlew connectedDebugAndroidTest
+```
+
+## Playback hardening
+
+The player now validates network stream URLs, uses a bounded Media3 buffer configuration, keeps adaptive track selection enabled, retries a limited number of alternative sources, and records privacy-safe playback diagnostics such as startup time, buffering events, resolution, bitrate, and error code.
+
 ## Streaming and rights
 
 Only use streams and media for which you have permission to distribute. DRM, tokenized URLs, CDN delivery, transcoding, authentication, and backend services belong to a future production media stack and are not simulated as complete in the Android client.
 
+See `docs/production-architecture.md` for the exact boundary between the Android app and future API/auth/media infrastructure.
+
 ## Quality gates
 
-Every change should pass linting, unit tests, and debug/release compilation in GitHub Actions. Critical playback, search, navigation, and accessibility behavior should gain regression tests before release.
+Every change should pass unit tests, Android lint, Android TV instrumentation smoke tests, and debug/release compilation in GitHub Actions. Critical playback, search, navigation, and accessibility behavior should gain regression tests before release.
