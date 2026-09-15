@@ -1,6 +1,5 @@
 package com.example.genritv.ui
 
-import com.example.genritv.model.TvChannel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.media3.common.MediaItem
@@ -8,41 +7,45 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.DefaultLoadControl
+import com.example.genritv.model.TvChannel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class PlayerViewModel(private val application: Application) : AndroidViewModel(application) {
-    
+
     private val _playerState = MutableStateFlow<PlayerState>(PlayerState.Idle)
     val playerState: StateFlow<PlayerState> = _playerState.asStateFlow()
 
     private var _player: ExoPlayer? = null
-    val player: ExoPlayer get() = _player ?: createPlayer(false).also { _player = it }
+    val player: ExoPlayer
+        get() = _player ?: createPlayer(false).also { _player = it }
 
     private var currentChannel: TvChannel? = null
     private var currentUrlIndex = 0
-    private var isVodMode: Boolean = false
+    private var isVodMode = false
 
     private fun createPlayer(isVod: Boolean): ExoPlayer {
         val loadControl = DefaultLoadControl.Builder()
             .setBufferParameters(
-                if (isVod) 30000 else 5000,    // minBufferMs
-                if (isVod) 60000 else 15000,   // maxBufferMs
-                2500,                          // bufferForPlaybackMs
-                5000                           // bufferForPlaybackAfterRebufferMs
+                if (isVod) 30_000 else 5_000,
+                if (isVod) 60_000 else 15_000,
+                2_500,
+                5_000
             )
             .build()
-            
+
         return ExoPlayer.Builder(application)
             .setLoadControl(loadControl)
-            .build().apply {
+            .build()
+            .apply {
                 addListener(object : Player.Listener {
                     override fun onPlaybackStateChanged(playbackState: Int) {
-                        when (playbackState) {
-                            Player.STATE_BUFFERING -> _playerState.value = PlayerState.Buffering
-                            Player.STATE_READY -> _playerState.value = PlayerState.Ready
-                            Player.STATE_IDLE -> _playerState.value = PlayerState.Idle
+                        _playerState.value = when (playbackState) {
+                            Player.STATE_BUFFERING -> PlayerState.Buffering
+                            Player.STATE_READY -> PlayerState.Ready
+                            Player.STATE_IDLE -> PlayerState.Idle
+                            else -> _playerState.value
                         }
                     }
 
@@ -54,46 +57,62 @@ class PlayerViewModel(private val application: Application) : AndroidViewModel(a
     }
 
     fun playChannel(channel: TvChannel, urlIndex: Int = 0, isVod: Boolean = false) {
+        if (urlIndex !in channel.urls.indices) {
+            _playerState.value = PlayerState.Error("No more stream URLs available")
+            return
+        }
+
         if (isVod != isVodMode || _player == null) {
             _player?.release()
             _player = createPlayer(isVod)
             isVodMode = isVod
         }
-        
+
         currentChannel = channel
         currentUrlIndex = urlIndex
-        
-        if (urlIndex < channel.urls.size) {
-            val url = channel.urls[urlIndex]
-            val mediaItem = MediaItem.fromUri(url)
-            player.setMediaItem(mediaItem)
-            player.prepare()
-            player.play()
-        } else {
-            _playerState.value = PlayerState.Error("No more URLs to try")
-        }
+
+        val mediaItem = MediaItem.fromUri(channel.urls[urlIndex])
+        player.setMediaItem(mediaItem)
+        player.prepare()
+        player.playWhenReady = true
+        _playerState.value = PlayerState.Buffering
     }
 
+    fun retryPlayback(): Boolean {
+        val channel = currentChannel ?: return false
+        val nextIndex = currentUrlIndex + 1
+        if (nextIndex !in channel.urls.indices) {
+            _playerState.value = PlayerState.Error("All stream URLs failed")
+            return false
+        }
 
-    fun retryPlayback() {
-        val channel = currentChannel ?: return
-        currentUrlIndex++
-        playChannel(channel, currentUrlIndex)
+        playChannel(channel, nextIndex, isVodMode)
+        return true
+    }
+
+    fun playFallback(channel: TvChannel): Boolean {
+        currentUrlIndex = 0
+        playChannel(channel, 0, isVodMode)
+        return channel.urls.isNotEmpty()
     }
 
     fun releasePlayer() {
-        player.release()
+        _player?.release()
+        _player = null
+        currentChannel = null
+        currentUrlIndex = 0
+        _playerState.value = PlayerState.Idle
     }
 
     override fun onCleared() {
-        super.onCleared()
         releasePlayer()
+        super.onCleared()
     }
 }
 
 sealed class PlayerState {
-    object Idle : PlayerState()
-    object Buffering : PlayerState()
-    object Ready : PlayerState()
+    data object Idle : PlayerState()
+    data object Buffering : PlayerState()
+    data object Ready : PlayerState()
     data class Error(val message: String) : PlayerState()
 }
