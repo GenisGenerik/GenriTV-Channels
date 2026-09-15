@@ -7,11 +7,13 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.common.util.UnstableApi
 import com.example.genritv.model.TvChannel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+@OptIn(UnstableApi::class)
 class PlayerViewModel(private val application: Application) : AndroidViewModel(application) {
 
     private val _playerState = MutableStateFlow<PlayerState>(PlayerState.Idle)
