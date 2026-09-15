@@ -37,11 +37,11 @@ jobs:
       - name: Fix Gradle wrapper permissions
         run: chmod +x ./gradlew
 
-      - name: Check source formatting and lint
-        run: ./gradlew --no-daemon lint
+      - name: Run unit tests
+        run: ./gradlew --no-daemon testDebugUnitTest
 
-      - name: Run JVM tests
-        run: ./gradlew --no-daemon test
+      - name: Run Android lint
+        run: ./gradlew --no-daemon lint
 
       - name: Build debug APK
         run: ./gradlew --no-daemon assembleDebug
@@ -79,3 +79,11 @@ jobs:
 
       - name: Build release APK
         run: ./gradlew --no-daemon assembleRelease
+
+      - name: Upload release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: genritv-release-apk-${{ github.sha }}
+          path: app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
+          retention-days: 14
