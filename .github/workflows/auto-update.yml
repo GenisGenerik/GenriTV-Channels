@@ -30,8 +30,8 @@ jobs:
           git add generated/
           if ! git diff --quiet --cached; then
             git commit -m "Auto-update IPTV playlist"
-            git pull --rebase
-            git push
+            git pull --rebase origin main
+            git push --force-with-lease origin main
           else
             echo "No changes to commit"
           fi
