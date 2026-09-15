@@ -5,15 +5,12 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
-import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.common.util.UnstableApi
 import com.example.genritv.model.TvChannel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-@OptIn(UnstableApi::class)
 class PlayerViewModel(private val application: Application) : AndroidViewModel(application) {
 
     private val _playerState = MutableStateFlow<PlayerState>(PlayerState.Idle)
@@ -21,25 +18,13 @@ class PlayerViewModel(private val application: Application) : AndroidViewModel(a
 
     private var _player: ExoPlayer? = null
     val player: ExoPlayer
-        get() = _player ?: createPlayer(false).also { _player = it }
+        get() = _player ?: createPlayer().also { _player = it }
 
     private var currentChannel: TvChannel? = null
     private var currentUrlIndex = 0
-    private var isVodMode = false
 
-    private fun createPlayer(isVod: Boolean): ExoPlayer {
-        val loadControl = if (isVod) {
-            DefaultLoadControl.Builder()
-                .setBufferDurationsMs(30_000, 60_000, 2_500, 5_000)
-                .build()
-        } else {
-            DefaultLoadControl.Builder()
-                .setBufferDurationsMs(5_000, 15_000, 1_500, 2_500)
-                .build()
-        }
-
-        return ExoPlayer.Builder(application)
-            .setLoadControl(loadControl)
+    private fun createPlayer(): ExoPlayer =
+        ExoPlayer.Builder(application)
             .build()
             .apply {
                 addListener(object : Player.Listener {
@@ -57,18 +42,11 @@ class PlayerViewModel(private val application: Application) : AndroidViewModel(a
                     }
                 })
             }
-    }
 
     fun playChannel(channel: TvChannel, urlIndex: Int = 0, isVod: Boolean = false) {
         if (urlIndex !in channel.urls.indices) {
             _playerState.value = PlayerState.Error("No more stream URLs available")
             return
-        }
-
-        if (isVod != isVodMode || _player == null) {
-            _player?.release()
-            _player = createPlayer(isVod)
-            isVodMode = isVod
         }
 
         currentChannel = channel
@@ -89,7 +67,7 @@ class PlayerViewModel(private val application: Application) : AndroidViewModel(a
             return false
         }
 
-        playChannel(channel, nextIndex, isVodMode)
+        playChannel(channel, nextIndex)
         return true
     }
 
@@ -99,7 +77,7 @@ class PlayerViewModel(private val application: Application) : AndroidViewModel(a
             return false
         }
         currentUrlIndex = 0
-        playChannel(channel, 0, isVodMode)
+        playChannel(channel, 0)
         return true
     }
 
