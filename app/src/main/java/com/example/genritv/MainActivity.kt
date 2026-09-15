@@ -6,10 +6,10 @@ import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.onDispose
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -19,7 +19,6 @@ import com.example.genritv.model.Series
 import com.example.genritv.model.TvChannel
 import com.example.genritv.model.VodMovie
 import com.example.genritv.ui.PlayerScreen
-import com.example.genritv.ui.PlayerState
 import com.example.genritv.ui.PlayerViewModel
 import com.example.genritv.ui.TVNavigation
 import kotlinx.coroutines.Job
@@ -70,6 +69,10 @@ class MainActivity : ComponentActivity() {
             val player = playerViewModel.player
             val playerState by playerViewModel.playerState.collectAsStateWithLifecycle()
 
+            LaunchedEffect(playerState) {
+                // Keep the player UI subscribed to state changes from Media3.
+            }
+
             DisposableEffect(navController) {
                 val listener = androidx.navigation.NavController.OnDestinationChangedListener { _, destination, _ ->
                     currentRoute = destination.route ?: "home"
@@ -104,22 +107,26 @@ class MainActivity : ComponentActivity() {
                     navController.navigate("player")
                 },
                 playerScreen = {
-                    val errorMessage = (playerState as? PlayerState.Error)?.message
                     PlayerScreen(
                         player = player,
                         channelName = currentChannelName,
                         channelLogo = currentChannelLogo,
                         showChannelName = showChannelName,
-                        isLoading = playerState is PlayerState.Buffering,
+                        isLoading = playerState is com.example.genritv.ui.PlayerState.Buffering,
                         currentTime = player.currentPosition.coerceAtLeast(0L).toString(),
-                        showError = playerState is PlayerState.Error,
-                        errorMessage = errorMessage,
+                        showError = playerState is com.example.genritv.ui.PlayerState.Error,
                         currentMode = currentMode,
                         isPlaying = player.isPlaying,
                         position = player.currentPosition.coerceAtLeast(0L),
                         duration = player.duration.coerceAtLeast(0L),
                         resizeMode = resizeMode,
-                        onRetry = { playerViewModel.retryPlayback() }
+                        onRetry = {
+                            when (currentMode) {
+                                AppMode.CHANNELS, AppMode.VOD, AppMode.SERIES -> {
+                                    playerViewModel.retryPlayback()
+                                }
+                            }
+                        }
                     )
                 }
             )
