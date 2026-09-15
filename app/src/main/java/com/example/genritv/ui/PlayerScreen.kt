@@ -42,6 +42,7 @@ fun PlayerScreen(
     isLoading: Boolean,
     currentTime: String,
     showError: Boolean,
+    errorMessage: String?,
     currentMode: MainActivity.AppMode,
     isPlaying: Boolean,
     position: Long,
@@ -168,9 +169,15 @@ fun PlayerScreen(
                     verticalArrangement = Arrangement.spacedBy(18.dp),
                     modifier = Modifier.padding(40.dp)
                 ) {
-                    Text("Channel Tidak Tersedia", color = Color.White, fontSize = 30.sp, fontWeight = FontWeight.Bold)
                     Text(
-                        "Sumber siaran gagal diputar. Coba sumber berikutnya.",
+                        if (currentMode == MainActivity.AppMode.CHANNELS) "Channel Tidak Tersedia" else "Konten Belum Dapat Diputar",
+                        color = Color.White,
+                        fontSize = 30.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        errorMessage?.takeIf { it.isNotBlank() }
+                            ?: "Sumber media gagal diputar.",
                         color = Color.White.copy(alpha = 0.72f),
                         fontSize = 18.sp
                     )
