@@ -1,11 +1,10 @@
-import requests
 import re
+import requests
 
 TIMEOUT = 8
 
 
 def is_active(url):
-    """Check stream reachability without relying on HEAD support."""
     try:
         response = requests.get(
             url,
@@ -24,15 +23,13 @@ def is_active(url):
 
 
 def parse_m3u(file_path):
-    """Parse EXTINF entries and preserve channel metadata plus the following URL."""
     channels = {}
-
     with open(file_path, "r", encoding="utf-8-sig", errors="ignore") as f:
-        lines = [line.strip() for line in f]
+        lines = [line.rstrip("\r\n") for line in f]
 
     i = 0
     while i < len(lines):
-        line = lines[i]
+        line = lines[i].strip()
         if not line.startswith("#EXTINF"):
             i += 1
             continue
@@ -40,19 +37,21 @@ def parse_m3u(file_path):
         tvg_id_match = re.search(r'tvg-id="([^"]*)"', line)
         tvg_logo_match = re.search(r'tvg-logo="([^"]*)"', line)
         group_match = re.search(r'group-title="([^"]*)"', line)
-
         tvg_id = tvg_id_match.group(1).strip() if tvg_id_match else "unknown"
         tvg_logo = tvg_logo_match.group(1).strip() if tvg_logo_match else ""
         group_title = group_match.group(1).strip() if group_match else ""
         name = line.rsplit(",", 1)[1].strip() if "," in line else tvg_id
 
+        directives = []
         url = ""
         j = i + 1
         while j < len(lines):
-            candidate = lines[j]
+            candidate = lines[j].strip()
             if candidate.startswith("#EXTINF"):
                 break
-            if candidate and not candidate.startswith("#"):
+            if candidate.startswith(("#EXTVLCOPT:", "#KODIPROP:", "#EXTHTTP:")):
+                directives.append(candidate)
+            elif candidate and not candidate.startswith("#"):
                 url = candidate
                 break
             j += 1
@@ -65,8 +64,8 @@ def parse_m3u(file_path):
                 "logo": tvg_logo,
                 "grup": group_title,
                 "tvgId": tvg_id,
+                "headers": directives,
             })
-
         i = max(i + 1, j)
 
     return channels
