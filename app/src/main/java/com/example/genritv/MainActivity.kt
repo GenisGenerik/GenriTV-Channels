@@ -43,17 +43,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        lifecycleScope.launch {
-            val loadedChannels = UnifiedChannelRepository.loadChannels(this@MainActivity)
-            channels = loadedChannels
-            if (loadedChannels.isNotEmpty()) {
-                currentChannelIndex = loadLastChannel()
-                Log.d("GENRI_TV", "Loaded ${loadedChannels.size} channels")
-            } else {
-                Log.e("GENRI_TV", "No channels available from remote or cache")
-            }
-        }
-
         setContent {
             val playerViewModel: PlayerViewModel = viewModel()
             val navController = rememberNavController()
@@ -81,17 +70,8 @@ class MainActivity : ComponentActivity() {
                 navController = navController,
                 onNavigateToLiveTv = { channel ->
                     currentMode = AppMode.CHANNELS
-                    val index = channels.indexOf(channel)
-                    if (index >= 0) {
-                        currentChannelIndex = index
-                        saveCurrentChannel()
-                        currentChannelName = channel.nama
-                        currentChannelLogo = channel.logo
-                        showChannelName = true
-                        resetHideJob(3000)
-                        playerViewModel.playChannel(channel, 0, isVod = false)
-                        navController.navigate("player")
-                    }
+                    playChannel(channel, playerViewModel)
+                    navController.navigate("player")
                 },
                 onNavigateToMovies = {
                     currentMode = AppMode.VOD
@@ -124,6 +104,34 @@ class MainActivity : ComponentActivity() {
                 }
             )
         }
+
+        lifecycleScope.launch {
+            try {
+                val loadedChannels = UnifiedChannelRepository.loadChannels(this@MainActivity)
+                channels = loadedChannels
+                if (loadedChannels.isNotEmpty()) {
+                    currentChannelIndex = loadLastChannel()
+                    Log.d("GENRI_TV", "Loaded ${loadedChannels.size} channels")
+                } else {
+                    Log.e("GENRI_TV", "No channels available from remote, cache, or assets")
+                }
+            } catch (e: Exception) {
+                Log.e("GENRI_TV", "Fatal channel load error", e)
+            }
+        }
+    }
+
+    private fun playChannel(channel: TvChannel, playerViewModel: PlayerViewModel) {
+        val index = channels.indexOf(channel)
+        if (index >= 0) {
+            currentChannelIndex = index
+        }
+        saveCurrentChannel()
+        currentChannelName = channel.nama
+        currentChannelLogo = channel.logo
+        showChannelName = true
+        resetHideJob(3000)
+        playerViewModel.playChannel(channel, 0, isVod = false)
     }
 
     private fun saveCurrentChannel() {
@@ -148,41 +156,38 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun changeChannel(delta: Int, playerViewModel: PlayerViewModel) {
+        if (channels.isEmpty()) return
+        currentChannelIndex = (currentChannelIndex + delta).mod(channels.size)
+        playChannel(channels[currentChannelIndex], playerViewModel)
+    }
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (currentRoute != "player" || currentMode != AppMode.CHANNELS || channels.isEmpty()) {
             return super.onKeyDown(keyCode, event)
         }
 
+        // PlayerViewModel is obtained from the currently rendered composition via
+        // the Activity content. We dispatch channel changes through an Activity-level
+        // flag and handle them on the next composition pass.
         return when (keyCode) {
             KeyEvent.KEYCODE_DPAD_UP -> {
-                changeChannel(-1)
+                pendingChannelDelta = -1
                 true
             }
             KeyEvent.KEYCODE_DPAD_DOWN -> {
-                changeChannel(1)
+                pendingChannelDelta = 1
                 true
             }
             else -> super.onKeyDown(keyCode, event)
         }
     }
 
-    private fun changeChannel(delta: Int) {
-        if (channels.isEmpty()) return
-        currentChannelIndex = (currentChannelIndex + delta).mod(channels.size)
-        val channel = channels[currentChannelIndex]
-        currentChannelName = channel.nama
-        currentChannelLogo = channel.logo
-        showChannelName = true
-        resetHideJob(3000)
-        saveCurrentChannel()
-        pendingChannelIndex = currentChannelIndex
-    }
-
-    private var pendingChannelIndex by mutableStateOf<Int?>(null)
+    private var pendingChannelDelta by mutableStateOf(0)
 
     override fun onResume() {
         super.onResume()
-        pendingChannelIndex = null
+        pendingChannelDelta = 0
     }
 
     override fun onDestroy() {
