@@ -93,6 +93,7 @@ class PlayerViewModel(private val application: Application) : AndroidViewModel(a
     }
 
     fun playMovie(movie: VodMovie) {
+        currentChannel = null
         playSources(listOf(movie.url), channelLabel = movie.title)
     }
 
@@ -102,7 +103,8 @@ class PlayerViewModel(private val application: Application) : AndroidViewModel(a
             _playerState.value = PlayerState.Error("Series belum memiliki episode dengan sumber video yang valid")
             return
         }
-        playSources(listOf(episode.url), channelLabel = "${series.title} • ${episode.label}")
+        currentChannel = null
+        playSources(listOf(episode.url), channelLabel = "${series.title} • ${episode.title}")
     }
 
     private fun playSources(
