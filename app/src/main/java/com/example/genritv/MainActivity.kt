@@ -1,193 +1,185 @@
 package com.example.genritv
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.BackHandler
-import androidx.activity.compose.setContent
-import androidx.navigation.compose.rememberNavController
-import com.example.genritv.ui.PlayerScreen
-import androidx.media3.common.PlaybackException
-import androidx.media3.common.Player
-import androidx.media3.ui.AspectRatioFrameLayout
 import android.util.Log
 import android.view.KeyEvent
-import androidx.compose.runtime.mutableStateOf
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.annotation.OptIn
-import androidx.media3.common.util.UnstableApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.example.genritv.data.UnifiedChannelRepository
 import com.example.genritv.model.TvChannel
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.genritv.ui.PlayerScreen
 import com.example.genritv.ui.PlayerViewModel
 import com.example.genritv.ui.TVNavigation
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-@OptIn(UnstableApi::class)
 class MainActivity : ComponentActivity() {
-    
+    companion object {
+        private const val PREFS_NAME = "genri_tv_prefs"
+        private const val KEY_LAST_CHANNEL = "last_channel"
+    }
+
+    enum class AppMode { CHANNELS, VOD, SERIES }
+
+    private lateinit var playerViewModel: PlayerViewModel
     private var currentRoute by mutableStateOf("home")
     private var channels by mutableStateOf<List<TvChannel>>(emptyList())
     private var currentChannelName by mutableStateOf("")
     private var currentChannelLogo by mutableStateOf<String?>(null)
-    private var showError by mutableStateOf(false)
-    
-    // New navigation states
-    enum class AppMode { CHANNELS, VOD, SERIES }
     private var currentMode by mutableStateOf(AppMode.CHANNELS)
     private var currentChannelIndex by mutableStateOf(0)
-
-    private lateinit var playerViewModel: PlayerViewModel
+    private var showChannelName by mutableStateOf(false)
+    private var hideChannelJob: Job? = null
+    private var resizeMode by mutableStateOf(0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            playerViewModel = viewModel()
-            val navController = rememberNavController()
-            
-            BackHandler(enabled = true) {
-                if (currentRoute == "player") {
-                    navController.popBackStack("home", inclusive = false)
-                } else {
-                    playerViewModel.releasePlayer()
-                    finishAndRemoveTask()
-                }
-            }
 
-            navController.addOnDestinationChangedListener { _, destination, _ ->
-                currentRoute = destination.route ?: "home"
-                if (currentRoute != "player") {
-                    playerViewModel.player.stop()
+        playerViewModel = ViewModelProvider(this)[PlayerViewModel::class.java]
+
+        lifecycleScope.launch {
+            try {
+                val loadedChannels = UnifiedChannelRepository.loadChannels(this@MainActivity)
+                channels = loadedChannels
+                if (loadedChannels.isNotEmpty()) {
+                    currentChannelIndex = loadLastChannel()
+                    Log.d("GENRI_TV", "Loaded ${loadedChannels.size} channels")
+                } else {
+                    Log.e("GENRI_TV", "No channels available from remote, cache, or assets")
                 }
+            } catch (e: Exception) {
+                Log.e("GENRI_TV", "Fatal channel load error", e)
             }
+        }
+
+        setContent {
+            val navController = androidx.navigation.compose.rememberNavController()
+            val player = playerViewModel.player
+            val playerState by playerViewModel.playerState.collectAsStateWithLifecycle()
 
             TVNavigation(
                 navController = navController,
                 onNavigateToLiveTv = { channel ->
                     currentMode = AppMode.CHANNELS
-                    playerViewModel.playChannel(channel)
+                    playChannel(channel)
                     navController.navigate("player")
                 },
-                onNavigateToMovies = { _ ->
+                onNavigateToMovies = {
                     currentMode = AppMode.VOD
                     navController.navigate("player")
                 },
-                onNavigateToSeries = { _ ->
+                onNavigateToSeries = {
                     currentMode = AppMode.SERIES
                     navController.navigate("player")
                 },
                 playerScreen = {
                     PlayerScreen(
-                        player = playerViewModel.player,
+                        player = player,
                         channelName = currentChannelName,
                         channelLogo = currentChannelLogo,
-                        showChannelName = false,
-                        isLoading = false,
-                        currentTime = "",
-                        showError = showError,
+                        showChannelName = showChannelName,
+                        isLoading = playerState is com.example.genritv.ui.PlayerState.Buffering,
+                        currentTime = player.currentPosition.coerceAtLeast(0L).toString(),
+                        showError = playerState is com.example.genritv.ui.PlayerState.Error,
                         currentMode = currentMode,
-                        isPlaying = playerViewModel.player.isPlaying,
-                        position = playerViewModel.player.currentPosition,
-                        duration = playerViewModel.player.duration,
-                        resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT,
-                        onRetry = { playerViewModel.retryPlayback() }
+                        isPlaying = player.isPlaying,
+                        position = player.currentPosition.coerceAtLeast(0L),
+                        duration = player.duration.coerceAtLeast(0L),
+                        resizeMode = resizeMode,
+                        onRetry = {
+                            if (currentMode == AppMode.CHANNELS) {
+                                playerViewModel.retryPlayback()
+                            }
+                        }
                     )
                 }
             )
         }
+    }
 
-        lifecycleScope.launch {
-            try {
-                val loadedChannels = UnifiedChannelRepository.loadChannels(this@MainActivity)
-                if (loadedChannels.isNotEmpty()) {
-                    channels = loadedChannels
-                } else {
-                    showError = true
-                    currentChannelName = "Tidak ada channel tersedia"
-                }
-            } catch (e: Exception) {
-                Log.e("GENRI_TV", "Fatal error during startup", e)
-                showError = true
-            }
+    private fun playChannel(channel: TvChannel) {
+        val index = channels.indexOf(channel)
+        if (index >= 0) currentChannelIndex = index
+        saveCurrentChannel()
+        currentChannelName = channel.nama
+        currentChannelLogo = channel.logo
+        showChannelName = true
+        resetHideJob(3000)
+        playerViewModel.playChannel(channel, 0, isVod = false)
+    }
+
+    private fun saveCurrentChannel() {
+        getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+            .edit()
+            .putInt(KEY_LAST_CHANNEL, currentChannelIndex)
+            .apply()
+    }
+
+    private fun loadLastChannel(): Int {
+        if (channels.isEmpty()) return 0
+        return getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+            .getInt(KEY_LAST_CHANNEL, 0)
+            .coerceIn(0, channels.lastIndex)
+    }
+
+    private fun resetHideJob(delayMs: Long) {
+        hideChannelJob?.cancel()
+        hideChannelJob = lifecycleScope.launch {
+            delay(delayMs)
+            showChannelName = false
         }
     }
-    
-    override fun onResume() {
-        super.onResume()
-        if (currentRoute == "player" && !playerViewModel.player.isPlaying) {
-            playerViewModel.player.play()
+
+    private fun changeChannel(delta: Int) {
+        if (channels.isEmpty()) return
+        currentChannelIndex = (currentChannelIndex + delta).mod(channels.size)
+        playChannel(channels[currentChannelIndex])
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (currentRoute != "player" || currentMode != AppMode.CHANNELS || channels.isEmpty()) {
+            return super.onKeyDown(keyCode, event)
+        }
+
+        return when (keyCode) {
+            KeyEvent.KEYCODE_DPAD_UP -> {
+                changeChannel(-1)
+                true
+            }
+            KeyEvent.KEYCODE_DPAD_DOWN -> {
+                changeChannel(1)
+                true
+            }
+            else -> super.onKeyDown(keyCode, event)
         }
     }
 
     override fun onPause() {
         super.onPause()
-        playerViewModel.player.pause()
+        if (::playerViewModel.isInitialized) {
+            playerViewModel.player.pause()
+        }
     }
 
     override fun onStop() {
         super.onStop()
-        playerViewModel.player.stop()
-    }
-
-    private fun playChannel(channelIndex: Int, urlIndex: Int) {
-        currentChannelIndex = channelIndex
-        val channel = channels.getOrNull(channelIndex) ?: return
-        currentChannelName = channel.nama
-        currentChannelLogo = channel.logo
-        playerViewModel.playChannel(channel, urlIndex)
+        if (::playerViewModel.isInitialized) {
+            playerViewModel.player.stop()
+        }
     }
 
     override fun onDestroy() {
+        hideChannelJob?.cancel()
+        if (::playerViewModel.isInitialized) {
+            playerViewModel.releasePlayer()
+        }
         super.onDestroy()
-        playerViewModel.releasePlayer()
-    }
-
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (handleRemoteKey(keyCode)) {
-            return true
-        }
-        return super.onKeyDown(keyCode, event)
-    }
-
-    private fun handleRemoteKey(keyCode: Int): Boolean {
-        if (currentRoute != "player") return false
-
-        return when (currentMode) {
-            AppMode.CHANNELS -> {
-                when (keyCode) {
-                    KeyEvent.KEYCODE_DPAD_UP -> {
-                        currentChannelIndex = (currentChannelIndex - 1 + channels.size) % channels.size
-                        playChannel(currentChannelIndex, 0)
-                        true
-                    }
-                    KeyEvent.KEYCODE_DPAD_DOWN -> {
-                        currentChannelIndex = (currentChannelIndex + 1) % channels.size
-                        playChannel(currentChannelIndex, 0)
-                        true
-                    }
-                    else -> false
-                }
-            }
-            AppMode.VOD, AppMode.SERIES -> {
-                when (keyCode) {
-                    KeyEvent.KEYCODE_DPAD_CENTER -> {
-                        if (playerViewModel.player.isPlaying) playerViewModel.player.pause() else playerViewModel.player.play()
-                        true
-                    }
-                    KeyEvent.KEYCODE_DPAD_LEFT -> {
-                        playerViewModel.player.seekTo(playerViewModel.player.currentPosition - 10000)
-                        true
-                    }
-                    KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                        playerViewModel.player.seekTo(playerViewModel.player.currentPosition + 10000)
-                        true
-                    }
-                    else -> false
-                }
-            }
-        }
     }
 }

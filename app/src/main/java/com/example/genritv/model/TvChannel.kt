@@ -7,6 +7,6 @@ data class TvChannel(
     val grup: String? = null,
     val tvgId: String? = null
 ) {
-    // Helper to get primary URL
-    val url: String get() = urls.firstOrNull() ?: ""
+    val url: String get() = urls.firstOrNull().orEmpty()
+    val hasPlayableUrl: Boolean get() = urls.any { it.isNotBlank() }
 }

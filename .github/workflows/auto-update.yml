@@ -33,8 +33,26 @@ jobs:
 
       - name: Run Pipeline
         run: python scripts/pipeline.py
-        env:
-          PLAYLIST_SOURCE: ${{ secrets.PLAYLIST_SOURCE }}
+
+      - name: Verify generated channel data
+        shell: bash
+        run: |
+          set -e
+          test -s generated/channels.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path("generated/channels.json")
+          data = json.loads(path.read_text(encoding="utf-8"))
+          if not isinstance(data, list) or not data:
+              raise SystemExit("generated/channels.json contains no channels")
+
+          print(f"Generated channel count: {len(data)}")
+          print("First channels:")
+          for channel in data[:10]:
+              print(f"- {channel.get('nama', '')}: {channel.get('urls', [])[:1]}")
+          PY
 
       - name: Commit and Push changes
         shell: bash
@@ -52,26 +70,6 @@ jobs:
 
           git commit -m 'Auto-update IPTV playlist'
 
-          for attempt in 1 2 3; do
-            echo "Push attempt $attempt..."
-            git fetch origin main
-            git rebase origin/main || {
-              echo 'Rebase failed. Aborting rebase.'
-              git rebase --abort || true
-              exit 1
-            }
-
-            if git push origin HEAD:main; then
-              echo 'Push succeeded.'
-              exit 0
-            fi
-
-            if [ "$attempt" -lt 3 ]; then
-              echo 'Push was rejected; retrying with latest remote state...'
-              git fetch origin main
-              git rebase origin/main
-            fi
-          done
-
-          echo 'Push failed after 3 attempts.'
-          exit 1
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
