@@ -32,7 +32,7 @@ object UnifiedChannelRepository {
         .build()
 
     suspend fun loadChannels(context: Context): List<TvChannel> = withContext(Dispatchers.IO) {
-        val cacheFile = File(context.cacheDir, CACHE_FILE_NAME)
+        val cacheFile = File(context.filesDir, CACHE_FILE_NAME)
 
         val remoteChannels = fetchRemoteChannels()
         if (remoteChannels.size >= MIN_CHANNELS) {
@@ -46,10 +46,14 @@ object UnifiedChannelRepository {
             return@withContext cachedChannels
         }
 
-        return@withContext try {
+        try {
             val bundled = JsonHelper.loadChannels(context)
-            Log.w("GENRI_TV", "Using bundled channels: ${bundled.size}")
-            bundled
+            if (bundled.isNotEmpty()) {
+                Log.w("GENRI_TV", "Using bundled channels: ${bundled.size}")
+                bundled
+            } else {
+                emptyList()
+            }
         } catch (e: Exception) {
             Log.e("GENRI_TV", "No channel source available", e)
             emptyList()
@@ -64,6 +68,7 @@ object UnifiedChannelRepository {
                 val request = Request.Builder()
                     .url(CHANNELS_JSON_URL)
                     .header("Accept", "application/json")
+                    .header("Cache-Control", "no-cache")
                     .build()
 
                 client.newCall(request).execute().use { response ->
@@ -76,11 +81,14 @@ object UnifiedChannelRepository {
 
                     val type = object : TypeToken<List<TvChannel>>() {}.type
                     val channels = gson.fromJson<List<TvChannel>>(json, type)
-                        ?.filter { it.nama.isNotBlank() && it.urls.any { url -> url.isNotBlank() } }
+                        ?.filter { channel ->
+                            channel.nama.isNotBlank() &&
+                                channel.urls.any { url -> url.isNotBlank() }
+                        }
                         .orEmpty()
 
                     if (channels.isEmpty()) {
-                        throw IllegalStateException("Remote playlist contains no valid channels")
+                        throw IllegalStateException("Remote channels.json contains no valid channels")
                     }
 
                     Log.d("GENRI_TV", "Loaded ${channels.size} channels from GitHub")
@@ -91,7 +99,10 @@ object UnifiedChannelRepository {
                 Log.e("GENRI_TV", "Invalid channels.json", e)
             } catch (e: Exception) {
                 lastError = e
-                Log.w("GENRI_TV", "Channel fetch attempt ${attempt + 1}/$MAX_ATTEMPTS failed: ${e.message}")
+                Log.w(
+                    "GENRI_TV",
+                    "Channel fetch attempt ${attempt + 1}/$MAX_ATTEMPTS failed: ${e.message}"
+                )
                 if (attempt < MAX_ATTEMPTS - 1) delay(500L * (attempt + 1))
             }
         }
@@ -102,6 +113,7 @@ object UnifiedChannelRepository {
 
     private fun saveToCache(cacheFile: File, channels: List<TvChannel>) {
         try {
+            cacheFile.parentFile?.mkdirs()
             FileWriter(cacheFile).use { writer ->
                 gson.toJson(channels, writer)
             }
@@ -117,7 +129,10 @@ object UnifiedChannelRepository {
             FileReader(cacheFile).use { reader ->
                 val type = object : TypeToken<List<TvChannel>>() {}.type
                 gson.fromJson<List<TvChannel>>(reader, type)
-                    ?.filter { it.nama.isNotBlank() && it.urls.any { url -> url.isNotBlank() } }
+                    ?.filter { channel ->
+                        channel.nama.isNotBlank() &&
+                            channel.urls.any { url -> url.isNotBlank() }
+                    }
                     .orEmpty()
             }
         } catch (e: Exception) {
