@@ -6,6 +6,7 @@ import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModelProvider
@@ -34,10 +35,10 @@ class MainActivity : ComponentActivity() {
     private var currentChannelName by mutableStateOf("")
     private var currentChannelLogo by mutableStateOf<String?>(null)
     private var currentMode by mutableStateOf(AppMode.CHANNELS)
-    private var currentChannelIndex by mutableStateOf(0)
+    private var currentChannelIndex by mutableIntStateOf(0)
     private var showChannelName by mutableStateOf(false)
     private var hideChannelJob: Job? = null
-    private var resizeMode by mutableStateOf(0)
+    private var resizeMode by mutableIntStateOf(0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,6 +89,7 @@ class MainActivity : ComponentActivity() {
                         isLoading = playerState is com.example.genritv.ui.PlayerState.Buffering,
                         currentTime = player.currentPosition.coerceAtLeast(0L).toString(),
                         showError = playerState is com.example.genritv.ui.PlayerState.Error,
+                        errorMessage = if (playerState is com.example.genritv.ui.PlayerState.Error) (playerState as com.example.genritv.ui.PlayerState.Error).message else null,
                         currentMode = currentMode,
                         isPlaying = player.isPlaying,
                         position = player.currentPosition.coerceAtLeast(0L),
@@ -112,7 +114,7 @@ class MainActivity : ComponentActivity() {
         currentChannelLogo = channel.logo
         showChannelName = true
         resetHideJob(3000)
-        playerViewModel.playChannel(channel, 0, isVod = false)
+        playerViewModel.playChannel(channel, 0)
     }
 
     private fun saveCurrentChannel() {

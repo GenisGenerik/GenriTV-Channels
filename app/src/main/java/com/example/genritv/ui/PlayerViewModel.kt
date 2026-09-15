@@ -16,13 +16,15 @@ import com.example.genritv.model.TvChannel
 import com.example.genritv.model.VodMovie
 import com.example.genritv.observability.PlaybackTelemetry
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 
 @OptIn(UnstableApi::class)
 class PlayerViewModel(private val application: Application) : AndroidViewModel(application) {
 
     private val _playerState = MutableStateFlow<PlayerState>(PlayerState.Idle)
-//    val playerState: StateFlow<PlayerState> = _playerState.asStateFlow()
+    val playerState: StateFlow<PlayerState> = _playerState.asStateFlow()
 
     private val telemetry = PlaybackTelemetry()
     private var _player: ExoPlayer? = null
