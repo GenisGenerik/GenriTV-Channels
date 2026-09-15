@@ -9,9 +9,9 @@ from scripts.modules.epg_manager import download_epg
 from scripts.modules.processor import merge_channels
 from scripts.modules.validator import is_active, parse_m3u
 
+# dhanytv is the single authoritative source for live TV channels.
+# Keep the source direct so the app receives the same channels maintained by that project.
 M3U_SOURCES = [
-    "https://iptv-org.github.io/iptv/countries/id.m3u",
-    "https://raw.githubusercontent.com/riotryulianto/iptv-playlists/master/indonesia.m3u",
     "https://raw.githubusercontent.com/dhasap/dhanytv/main/dhanytv.m3u",
 ]
 
