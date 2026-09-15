@@ -2,8 +2,12 @@ name: Auto Update IPTV Playlist
 
 on:
   schedule:
-    - cron: '0 0 * * *' # Every day at 00:00 UTC
+    - cron: '0 0 * * *'
   workflow_dispatch:
+
+concurrency:
+  group: iptv-auto-update
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -11,34 +15,38 @@ permissions:
 jobs:
   update-playlist:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
       - name: Install dependencies
         run: pip install requests
+
       - name: Run Pipeline
         run: python scripts/pipeline.py
         env:
           PLAYLIST_SOURCE: ${{ secrets.PLAYLIST_SOURCE }}
+
       - name: Commit and Push changes
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
-          
-          # Ambil update terbaru dari remote dan gabungkan lewat rebase dulu
-          git fetch origin main
-          git rebase origin/main || git rebase --abort
-          
-          # Tambahkan perubahan hasil pipeline
+
           git add generated/
-          
-          # Cek apakah ada perubahan
-          if git diff --quiet --cached; then
-            echo "No changes to commit"
-          else
-            git commit -m "Auto-update IPTV playlist"
-            git push origin main
+
+          if git diff --cached --quiet; then
+            echo 'No changes to commit'
+            exit 0
           fi
+
+          git commit -m 'Auto-update IPTV playlist'
+
+          git pull --rebase origin main
+          git push origin main
