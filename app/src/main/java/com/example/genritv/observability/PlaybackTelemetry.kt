@@ -1,8 +1,11 @@
 package com.example.genritv.observability
 
 import android.util.Log
+import androidx.annotation.OptIn
 import androidx.media3.common.Format
+import androidx.media3.common.util.UnstableApi
 
+@OptIn(UnstableApi::class)
 class PlaybackTelemetry {
     private var startedAtMs = 0L
     private var bufferingStartedAtMs = 0L
