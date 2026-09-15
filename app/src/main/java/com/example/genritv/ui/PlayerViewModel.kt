@@ -26,12 +26,6 @@ class PlayerViewModel(private val application: Application) : AndroidViewModel(a
 
     private fun createPlayer(isVod: Boolean): ExoPlayer {
         val loadControl = DefaultLoadControl.Builder()
-            .setBufferParameters(
-                if (isVod) 30000 else 5000,    // minBufferMs
-                if (isVod) 60000 else 15000,   // maxBufferMs
-                2500,                          // bufferForPlaybackMs
-                5000                           // bufferForPlaybackAfterRebufferMs
-            )
             .build()
             
         return ExoPlayer.Builder(application)
