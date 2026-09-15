@@ -1,6 +1,10 @@
 name: Auto Update IPTV Playlist
 
 on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'generated/**'
   schedule:
     - cron: '0 0 * * *'
   workflow_dispatch:
@@ -47,6 +51,8 @@ jobs:
           data = json.loads(path.read_text(encoding="utf-8"))
           if not isinstance(data, list) or not data:
               raise SystemExit("generated/channels.json contains no channels")
+          if len(data) < 100:
+              raise SystemExit(f"Generated channel count too low: {len(data)}")
 
           print(f"Generated channel count: {len(data)}")
           print("First channels:")
