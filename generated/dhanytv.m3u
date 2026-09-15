@@ -1,0 +1,5 @@
+#EXTM3U
+#EXTINF:-1 tvg-id="TVRI.id" tvg-name="TVRI Nasional" tvg-logo="https://github.com/riotryulianto/iptv-playlists/blob/main/icons/tvri.png?raw=true" group-title="Nasional",TVRI Nasional
+https://ott-balancer.tvri.go.id/live/eds/Nasional/hls/Nasional.m3u8
+#EXTINF:-1 tvg-id="iNews.id" tvg-name="iNews (Primary)" tvg-logo="https://thumbor.prod.vidiocdn.com/wSfbef0k6V3fn7rnZa4azgVrLcM=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/728/eb7747.png" group-title="Berita",iNews (Primary)
+https://live.i-news.tv/hls/stream.m3u8

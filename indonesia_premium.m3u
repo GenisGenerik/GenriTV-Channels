@@ -1,0 +1,39 @@
+#EXTM3U x-tvg-url="https://raw.githubusercontent.com/dhasap/dhanytv/main/epg.xml" user-agent="DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1"
+
+# -----------------------------------------------------------------------------
+# PREMIUM INDONESIA (Optimized & Integrated Sources)
+# -----------------------------------------------------------------------------
+
+# TVRI
+#EXTINF:-1 tvg-id="TVRI.id" tvg-name="TVRI Nasional" tvg-logo="https://github.com/riotryulianto/iptv-playlists/blob/main/icons/tvri.png?raw=true" group-title="Nasional",TVRI Nasional
+https://ott-balancer.tvri.go.id/live/eds/Nasional/hls/Nasional.m3u8
+
+# GTV
+#EXTINF:-1 tvg-id="GTV.id" tvg-name="GTV (Primary)" tvg-logo="https://thumbor.prod.vidiocdn.com/g6zqJ5DAVvSGkXcs4US-vLY_pw=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/731/dd0793.png" group-title="Nasional",GTV (Primary)
+https://mncmedia.malingtv.workers.dev/gtv.m3u8
+
+# MNCTV
+#EXTINF:-1 tvg-id="MNCTV.id" tvg-name="MNCTV (Primary)" tvg-logo="https://thumbor.prod.vidiocdn.com/A4rNvFKdLq9QYWcA9c-uvL38=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/665/337c4d.png" group-title="Nasional",MNCTV (Primary)
+https://mncmedia.malingtv.workers.dev/mnctv.m3u8
+
+# ANTV
+#EXTINF:-1 tvg-id="ANTV.id" tvg-name="ANTV (Primary)" tvg-logo="https://thumbor.prod.vidiocdn.com/IRVkD3QGRzroJ4IZzXBpS-0MRls=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/782/e1af8b.png" group-title="Nasional",ANTV (Primary)
+#EXTVLCOPT:http-user-agent=DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
+https://op-flashcon-digdayahd-1.dens.tv/h/h235/01.m3u8
+#EXTINF:-1 tvg-id="ANTV.id" tvg-name="ANTV (Backup 1)" tvg-logo="https://thumbor.prod.vidiocdn.com/IRVkD3QGRzroJ4IZzXBpS-0MRls=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/782/e1af8b.png" group-title="Nasional",ANTV (Backup 1)
+http://103.58.160.157:8278/720-ANTV/playlist.m3u8
+
+# Kompas TV
+#EXTINF:-1 tvg-id="KompasTV.id" tvg-name="Kompas TV (Primary)" tvg-logo="https://thumbor.prod.vidiocdn.com/Pf8yLSfHEUZeRI9tUzLDR2U8Zow=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/874/042ca3.png" group-title="Berita",Kompas TV (Primary)
+#EXTVLCOPT:http-user-agent=DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1
+#EXTVLCOPT:http-referrer=https://www.dens.tv/
+https://op-flashcon-digdayahd-1.dens.tv/s/s104/index.m3u8
+#EXTINF:-1 tvg-id="KompasTV.id" tvg-name="Kompas TV (Backup 1)" tvg-logo="https://thumbor.prod.vidiocdn.com/Pf8yLSfHEUZeRI9tUzLDR2U8Zow=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/874/042ca3.png" group-title="Berita",Kompas TV (Backup 1)
+https://op-group1-swiftservehd-1.dens.tv/h/h234/index.m3u8
+
+# iNews
+#EXTINF:-1 tvg-id="iNews.id" tvg-name="iNews (Primary)" tvg-logo="https://thumbor.prod.vidiocdn.com/wSfbef0k6V3fn7rnZa4azgVrLcM=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/728/eb7747.png" group-title="Berita",iNews (Primary)
+https://live.i-news.tv/hls/stream.m3u8
+#EXTINF:-1 tvg-id="iNews.id" tvg-name="iNews (Backup 1)" tvg-logo="https://thumbor.prod.vidiocdn.com/wSfbef0k6V3fn7rnZa4azgVrLcM=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/728/eb7747.png" group-title="Berita",iNews (Backup 1)
+https://mncmedia.malingtv.workers.dev/inews.m3u8

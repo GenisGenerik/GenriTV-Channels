@@ -1,0 +1,29 @@
+name: Auto Update IPTV Playlist
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Every day at 00:00 UTC (Adjust to 07:00 WIB as needed)
+  workflow_dispatch:
+
+jobs:
+  update-playlist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install requests
+      - name: Run Pipeline
+        run: python scripts/pipeline.py
+        env:
+          PLAYLIST_SOURCE: ${{ secrets.PLAYLIST_SOURCE }}
+      - name: Commit changes
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add generated/
+          git commit -m "Auto-update IPTV playlist" || echo "No changes to commit"
+          git push
