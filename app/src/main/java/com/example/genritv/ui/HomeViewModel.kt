@@ -1,9 +1,10 @@
 package com.example.genritv.ui
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.genritv.data.UnifiedChannelRepository
 import com.example.genritv.data.SeriesRepository
+import com.example.genritv.data.UnifiedChannelRepository
 import com.example.genritv.data.VodRepository
 import com.example.genritv.model.Series
 import com.example.genritv.model.TvChannel
@@ -14,7 +15,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import android.content.Context
 
 enum class HomeCategory {
     HOME, TV_NASIONAL, TV_REGIONAL, MOVIES, SERIES
@@ -33,17 +33,12 @@ class HomeViewModel : ViewModel() {
     val homeState: StateFlow<HomeState> = combine(
         _channels, _movies, _series, _searchQuery, _selectedCategory
     ) { channels, movies, series, query, category ->
-        
-        // Contextual filtering based on category
         val filteredChannels = when (category) {
-            HomeCategory.TV_NASIONAL -> channels.filter { 
-                (it.grup?.contains("Nasional", ignoreCase = true) == true || 
-                 it.nama.contains("RCTI", true) || it.nama.contains("SCTV", true) || it.nama.contains("INDOSIAR", true))
-                && it.nama.contains(query, ignoreCase = true)
+            HomeCategory.TV_NASIONAL -> channels.filter { channel ->
+                isNationalChannel(channel) && channel.nama.contains(query, ignoreCase = true)
             }
-            HomeCategory.TV_REGIONAL -> channels.filter { 
-                it.grup?.contains("Regional", ignoreCase = true) == true 
-                && it.nama.contains(query, ignoreCase = true)
+            HomeCategory.TV_REGIONAL -> channels.filter { channel ->
+                isRegionalChannel(channel) && channel.nama.contains(query, ignoreCase = true)
             }
             HomeCategory.HOME -> channels.filter { it.nama.contains(query, ignoreCase = true) }
             else -> emptyList()
@@ -68,7 +63,8 @@ class HomeViewModel : ViewModel() {
 
     fun loadData(context: Context) {
         viewModelScope.launch {
-            _channels.value = UnifiedChannelRepository.loadChannels(context)
+            val loadedChannels = UnifiedChannelRepository.loadChannels(context)
+            _channels.value = loadedChannels
             _movies.value = VodRepository.getMovies()
             _series.value = SeriesRepository.getSeries()
         }
@@ -80,8 +76,25 @@ class HomeViewModel : ViewModel() {
 
     fun onCategorySelected(category: HomeCategory) {
         _selectedCategory.value = category
-        // Clear search when switching categories if preferred, but user said "Search harus kontekstual"
-        // so maybe keep the query but it will only apply to the new category.
+    }
+
+    private fun isNationalChannel(channel: TvChannel): Boolean {
+        val group = channel.grup.orEmpty()
+        val name = channel.nama
+        val nationalKeywords = listOf(
+            "nasional", "indonesia", "rcti", "sctv", "indosiar", "antv",
+            "trans", "tvone", "metro", "kompas", "mnc", "gtv", "inews",
+            "tvri", "rtv", "net", "garuda", "moji", "daai"
+        )
+        return nationalKeywords.any { keyword ->
+            group.contains(keyword, ignoreCase = true) || name.contains(keyword, ignoreCase = true)
+        }
+    }
+
+    private fun isRegionalChannel(channel: TvChannel): Boolean {
+        val group = channel.grup.orEmpty()
+        return group.contains("regional", ignoreCase = true) ||
+            group.contains("daerah", ignoreCase = true)
     }
 }
 
