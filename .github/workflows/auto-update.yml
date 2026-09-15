@@ -6,15 +6,13 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write # Diperlukan agar bot bisa melakukan commit/push
+  contents: write
 
 jobs:
   update-playlist:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # Pastikan seluruh histori diambil agar rebase/push bekerja
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -30,9 +28,11 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           
-          # Konfigurasi remote untuk memastikan push dilakukan ke branch yang benar
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          # Force synchronization with remote
+          git fetch origin main
+          git reset --hard origin/main
           
+          # Tambahkan perubahan
           git add generated/
           
           # Cek apakah ada perubahan
@@ -40,10 +40,5 @@ jobs:
             echo "No changes to commit."
           else
             git commit -m "Auto-update IPTV playlist"
-            
-            # Tarik perubahan terbaru dari remote untuk menghindari konflik
-            git pull --rebase origin main
-            
-            # Push perubahan
             git push origin main
           fi
