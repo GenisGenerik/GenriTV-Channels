@@ -23,21 +23,15 @@ jobs:
         run: python scripts/pipeline.py
         env:
           PLAYLIST_SOURCE: ${{ secrets.PLAYLIST_SOURCE }}
-      - name: Commit and Push changes
+      - name: Commit changes
         run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          
-          # Tambahkan perubahan dari hasil generate pipeline terlebih dahulu
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
           git add generated/
-          
-          # Cek apakah ada perubahan yang perlu di-commit
-          if git diff --quiet && git diff --cached --quiet; then
-            echo "No changes to commit."
-          else
+          if ! git diff --quiet --cached; then
             git commit -m "Auto-update IPTV playlist"
-            
-            # Tarik perubahan remote dengan rebase jika ada pembaruan di server, lalu push
-            git pull origin main --rebase || true
-            git push origin main
+            git pull --rebase
+            git push
+          else
+            echo "No changes to commit"
           fi
