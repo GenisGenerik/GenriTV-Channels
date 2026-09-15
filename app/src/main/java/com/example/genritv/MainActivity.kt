@@ -44,13 +44,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launch {
-            try {
-                val loadedChannels = UnifiedChannelRepository.loadChannels(this@MainActivity)
-                channels = loadedChannels
+            val loadedChannels = UnifiedChannelRepository.loadChannels(this@MainActivity)
+            channels = loadedChannels
+            if (loadedChannels.isNotEmpty()) {
                 currentChannelIndex = loadLastChannel()
                 Log.d("GENRI_TV", "Loaded ${loadedChannels.size} channels")
-            } catch (e: Exception) {
-                Log.e("GENRI_TV", "Fatal channel load error", e)
+            } else {
+                Log.e("GENRI_TV", "No channels available from remote or cache")
             }
         }
 
@@ -59,9 +59,6 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val player = playerViewModel.player
             val playerState by playerViewModel.playerState.collectAsStateCompat()
-            val isPlayerPlaying = player.isPlaying
-            val playerPosition = player.currentPosition.coerceAtLeast(0L)
-            val playerDuration = player.duration.coerceAtLeast(0L)
 
             BackHandler(enabled = true) {
                 if (currentRoute == "player") {
@@ -93,8 +90,8 @@ class MainActivity : ComponentActivity() {
                         showChannelName = true
                         resetHideJob(3000)
                         playerViewModel.playChannel(channel, 0, isVod = false)
+                        navController.navigate("player")
                     }
-                    navController.navigate("player")
                 },
                 onNavigateToMovies = {
                     currentMode = AppMode.VOD
@@ -111,12 +108,12 @@ class MainActivity : ComponentActivity() {
                         channelLogo = currentChannelLogo,
                         showChannelName = showChannelName,
                         isLoading = playerState is com.example.genritv.ui.PlayerState.Buffering,
-                        currentTime = playerPosition,
+                        currentTime = player.currentPosition.coerceAtLeast(0L),
                         showError = playerState is com.example.genritv.ui.PlayerState.Error,
                         currentMode = currentMode,
-                        isPlaying = isPlayerPlaying,
-                        position = playerPosition,
-                        duration = playerDuration,
+                        isPlaying = player.isPlaying,
+                        position = player.currentPosition.coerceAtLeast(0L),
+                        duration = player.duration.coerceAtLeast(0L),
                         resizeMode = resizeMode,
                         onRetry = {
                             if (currentMode == AppMode.CHANNELS) {
@@ -152,23 +149,20 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (currentRoute != "player" || channels.isEmpty()) {
+        if (currentRoute != "player" || currentMode != AppMode.CHANNELS || channels.isEmpty()) {
             return super.onKeyDown(keyCode, event)
         }
 
-        return when (currentMode) {
-            AppMode.CHANNELS -> when (keyCode) {
-                KeyEvent.KEYCODE_DPAD_UP -> {
-                    changeChannel(-1)
-                    true
-                }
-                KeyEvent.KEYCODE_DPAD_DOWN -> {
-                    changeChannel(1)
-                    true
-                }
-                else -> super.onKeyDown(keyCode, event)
+        return when (keyCode) {
+            KeyEvent.KEYCODE_DPAD_UP -> {
+                changeChannel(-1)
+                true
             }
-            AppMode.VOD, AppMode.SERIES -> super.onKeyDown(keyCode, event)
+            KeyEvent.KEYCODE_DPAD_DOWN -> {
+                changeChannel(1)
+                true
+            }
+            else -> super.onKeyDown(keyCode, event)
         }
     }
 
@@ -181,14 +175,14 @@ class MainActivity : ComponentActivity() {
         showChannelName = true
         resetHideJob(3000)
         saveCurrentChannel()
-        pendingChannelPlay = true
+        pendingChannelIndex = currentChannelIndex
     }
 
-    private var pendingChannelPlay by mutableStateOf(false)
+    private var pendingChannelIndex by mutableStateOf<Int?>(null)
 
     override fun onResume() {
         super.onResume()
-        pendingChannelPlay = false
+        pendingChannelIndex = null
     }
 
     override fun onDestroy() {
