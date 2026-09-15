@@ -10,7 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.navigation.compose.rememberNavController
 import com.example.genritv.data.UnifiedChannelRepository
@@ -30,6 +30,7 @@ class MainActivity : ComponentActivity() {
 
     enum class AppMode { CHANNELS, VOD, SERIES }
 
+    private lateinit var playerViewModel: PlayerViewModel
     private var currentRoute by mutableStateOf("home")
     private var channels by mutableStateOf<List<TvChannel>>(emptyList())
     private var currentChannelName by mutableStateOf("")
@@ -43,8 +44,24 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        playerViewModel = ViewModelProvider(this)[PlayerViewModel::class.java]
+
+        lifecycleScope.launch {
+            try {
+                val loadedChannels = UnifiedChannelRepository.loadChannels(this@MainActivity)
+                channels = loadedChannels
+                if (loadedChannels.isNotEmpty()) {
+                    currentChannelIndex = loadLastChannel()
+                    Log.d("GENRI_TV", "Loaded ${loadedChannels.size} channels")
+                } else {
+                    Log.e("GENRI_TV", "No channels available from remote, cache, or assets")
+                }
+            } catch (e: Exception) {
+                Log.e("GENRI_TV", "Fatal channel load error", e)
+            }
+        }
+
         setContent {
-            val playerViewModel: PlayerViewModel = viewModel()
             val navController = rememberNavController()
             val player = playerViewModel.player
             val playerState by playerViewModel.playerState.collectAsStateCompat()
@@ -70,7 +87,7 @@ class MainActivity : ComponentActivity() {
                 navController = navController,
                 onNavigateToLiveTv = { channel ->
                     currentMode = AppMode.CHANNELS
-                    playChannel(channel, playerViewModel)
+                    playChannel(channel)
                     navController.navigate("player")
                 },
                 onNavigateToMovies = {
@@ -104,28 +121,11 @@ class MainActivity : ComponentActivity() {
                 }
             )
         }
-
-        lifecycleScope.launch {
-            try {
-                val loadedChannels = UnifiedChannelRepository.loadChannels(this@MainActivity)
-                channels = loadedChannels
-                if (loadedChannels.isNotEmpty()) {
-                    currentChannelIndex = loadLastChannel()
-                    Log.d("GENRI_TV", "Loaded ${loadedChannels.size} channels")
-                } else {
-                    Log.e("GENRI_TV", "No channels available from remote, cache, or assets")
-                }
-            } catch (e: Exception) {
-                Log.e("GENRI_TV", "Fatal channel load error", e)
-            }
-        }
     }
 
-    private fun playChannel(channel: TvChannel, playerViewModel: PlayerViewModel) {
+    private fun playChannel(channel: TvChannel) {
         val index = channels.indexOf(channel)
-        if (index >= 0) {
-            currentChannelIndex = index
-        }
+        if (index >= 0) currentChannelIndex = index
         saveCurrentChannel()
         currentChannelName = channel.nama
         currentChannelLogo = channel.logo
@@ -156,10 +156,10 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun changeChannel(delta: Int, playerViewModel: PlayerViewModel) {
+    private fun changeChannel(delta: Int) {
         if (channels.isEmpty()) return
         currentChannelIndex = (currentChannelIndex + delta).mod(channels.size)
-        playChannel(channels[currentChannelIndex], playerViewModel)
+        playChannel(channels[currentChannelIndex])
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -167,31 +167,38 @@ class MainActivity : ComponentActivity() {
             return super.onKeyDown(keyCode, event)
         }
 
-        // PlayerViewModel is obtained from the currently rendered composition via
-        // the Activity content. We dispatch channel changes through an Activity-level
-        // flag and handle them on the next composition pass.
         return when (keyCode) {
             KeyEvent.KEYCODE_DPAD_UP -> {
-                pendingChannelDelta = -1
+                changeChannel(-1)
                 true
             }
             KeyEvent.KEYCODE_DPAD_DOWN -> {
-                pendingChannelDelta = 1
+                changeChannel(1)
                 true
             }
             else -> super.onKeyDown(keyCode, event)
         }
     }
 
-    private var pendingChannelDelta by mutableStateOf(0)
+    override fun onPause() {
+        super.onPause()
+        if (::playerViewModel.isInitialized) {
+            playerViewModel.player.pause()
+        }
+    }
 
-    override fun onResume() {
-        super.onResume()
-        pendingChannelDelta = 0
+    override fun onStop() {
+        super.onStop()
+        if (::playerViewModel.isInitialized) {
+            playerViewModel.player.stop()
+        }
     }
 
     override fun onDestroy() {
         hideChannelJob?.cancel()
+        if (::playerViewModel.isInitialized) {
+            playerViewModel.releasePlayer()
+        }
         super.onDestroy()
     }
 }
