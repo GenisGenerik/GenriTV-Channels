@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.example.genritv.model.TvChannel
 import com.google.gson.Gson
-import com.google.gson.JsonParseException
+import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -22,24 +22,48 @@ object UnifiedChannelRepository {
         "https://raw.githubusercontent.com/GenisGenerik/GenriTV-Channels/main/generated/channels.json"
     private const val CACHE_FILE_NAME = "channels_cache.json"
     private const val MAX_ATTEMPTS = 3
+    private const val MIN_CHANNELS = 1
 
     private val gson = Gson()
     private val client = OkHttpClient.Builder()
         .connectTimeout(10, TimeUnit.SECONDS)
-        .readTimeout(20, TimeUnit.SECONDS)
-        .callTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(15, TimeUnit.SECONDS)
+        .callTimeout(20, TimeUnit.SECONDS)
         .build()
 
     suspend fun loadChannels(context: Context): List<TvChannel> = withContext(Dispatchers.IO) {
         val cacheFile = File(context.cacheDir, CACHE_FILE_NAME)
 
-        for (attempt in 1..MAX_ATTEMPTS) {
-            try {
-                Log.d("GENRI_TV", "Fetching channels (attempt $attempt/$MAX_ATTEMPTS): $CHANNELS_JSON_URL")
+        val remoteChannels = fetchRemoteChannels()
+        if (remoteChannels.size >= MIN_CHANNELS) {
+            saveToCache(cacheFile, remoteChannels)
+            return@withContext remoteChannels
+        }
 
+        val cachedChannels = loadFromCache(cacheFile)
+        if (cachedChannels.size >= MIN_CHANNELS) {
+            Log.w("GENRI_TV", "Using cached channels: ${cachedChannels.size}")
+            return@withContext cachedChannels
+        }
+
+        return@withContext try {
+            val bundled = JsonHelper.loadChannels(context)
+            Log.w("GENRI_TV", "Using bundled channels: ${bundled.size}")
+            bundled
+        } catch (e: Exception) {
+            Log.e("GENRI_TV", "No channel source available", e)
+            emptyList()
+        }
+    }
+
+    private suspend fun fetchRemoteChannels(): List<TvChannel> {
+        var lastError: Exception? = null
+
+        repeat(MAX_ATTEMPTS) { attempt ->
+            try {
                 val request = Request.Builder()
                     .url(CHANNELS_JSON_URL)
-                    .header("Cache-Control", "no-cache")
+                    .header("Accept", "application/json")
                     .build()
 
                 client.newCall(request).execute().use { response ->
@@ -48,47 +72,32 @@ object UnifiedChannelRepository {
                     }
 
                     val json = response.body?.string().orEmpty()
-                    if (json.isBlank()) {
-                        throw IllegalStateException("Empty channels response")
-                    }
+                    if (json.isBlank()) throw IllegalStateException("Empty response body")
 
                     val type = object : TypeToken<List<TvChannel>>() {}.type
-                    val channels: List<TvChannel> = gson.fromJson(json, type)
-                        ?: throw JsonParseException("Invalid channels JSON")
+                    val channels = gson.fromJson<List<TvChannel>>(json, type)
+                        ?.filter { it.nama.isNotBlank() && it.urls.any { url -> url.isNotBlank() } }
+                        .orEmpty()
 
-                    val validChannels = channels.filter { it.nama.isNotBlank() && it.urls.isNotEmpty() }
-                    if (validChannels.isEmpty()) {
-                        throw IllegalStateException("Channels response contains no valid channels")
+                    if (channels.isEmpty()) {
+                        throw IllegalStateException("Remote playlist contains no valid channels")
                     }
 
-                    saveToCache(cacheFile, validChannels)
-                    Log.d("GENRI_TV", "Loaded ${validChannels.size} channels from GitHub")
-                    return@withContext validChannels
+                    Log.d("GENRI_TV", "Loaded ${channels.size} channels from GitHub")
+                    return channels
                 }
+            } catch (e: JsonSyntaxException) {
+                lastError = e
+                Log.e("GENRI_TV", "Invalid channels.json", e)
             } catch (e: Exception) {
-                Log.w("GENRI_TV", "Channel fetch attempt $attempt failed: ${e.message}")
-                if (attempt < MAX_ATTEMPTS) {
-                    delay((attempt * 1000L).coerceAtMost(3000L))
-                }
+                lastError = e
+                Log.w("GENRI_TV", "Channel fetch attempt ${attempt + 1}/$MAX_ATTEMPTS failed: ${e.message}")
+                if (attempt < MAX_ATTEMPTS - 1) delay(500L * (attempt + 1))
             }
         }
 
-        val cached = loadFromCache(cacheFile)
-        if (cached.isNotEmpty()) {
-            Log.d("GENRI_TV", "Using ${cached.size} cached channels")
-            return@withContext cached
-        }
-
-        // Last-resort bundled fallback so the app still has data on first launch/offline.
-        return@withContext try {
-            val bundled = JsonHelper.loadChannels(context)
-                .filter { it.nama.isNotBlank() && it.urls.isNotEmpty() }
-            Log.d("GENRI_TV", "Using ${bundled.size} bundled fallback channels")
-            bundled
-        } catch (e: Exception) {
-            Log.e("GENRI_TV", "No channel source available", e)
-            emptyList()
-        }
+        Log.e("GENRI_TV", "Remote channel fetch failed after $MAX_ATTEMPTS attempts", lastError)
+        return emptyList()
     }
 
     private fun saveToCache(cacheFile: File, channels: List<TvChannel>) {
@@ -97,7 +106,7 @@ object UnifiedChannelRepository {
                 gson.toJson(channels, writer)
             }
         } catch (e: Exception) {
-            Log.e("GENRI_TV", "Failed to save cache", e)
+            Log.e("GENRI_TV", "Failed to save channel cache", e)
         }
     }
 
@@ -108,8 +117,8 @@ object UnifiedChannelRepository {
             FileReader(cacheFile).use { reader ->
                 val type = object : TypeToken<List<TvChannel>>() {}.type
                 gson.fromJson<List<TvChannel>>(reader, type)
-                    ?.filter { it.nama.isNotBlank() && it.urls.isNotEmpty() }
-                    ?: emptyList()
+                    ?.filter { it.nama.isNotBlank() && it.urls.any { url -> url.isNotBlank() } }
+                    .orEmpty()
             }
         } catch (e: Exception) {
             Log.e("GENRI_TV", "Cache read failed", e)
