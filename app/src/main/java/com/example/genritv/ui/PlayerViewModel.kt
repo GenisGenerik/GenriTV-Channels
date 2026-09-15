@@ -1,15 +1,13 @@
 package com.example.genritv.ui
 
 import android.app.Application
-import android.os.SystemClock
 import androidx.lifecycle.AndroidViewModel
-import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import com.example.genritv.data.StreamUrlValidator
 import com.example.genritv.model.Series
@@ -31,7 +29,7 @@ class PlayerViewModel(private val application: Application) : AndroidViewModel(a
     val player: ExoPlayer
         get() = _player ?: createPlayer().also { _player = it }
 
-    private var currentStreamUrls: List<String> = emptyList()
+    private var currentChannel: TvChannel? = null
     private var currentUrlIndex = -1
     private var retryCount = 0
 
@@ -40,7 +38,12 @@ class PlayerViewModel(private val application: Application) : AndroidViewModel(a
             setParameters(buildUponParameters().setForceHighestSupportedBitrate(false).build())
         }
         val loadControl = DefaultLoadControl.Builder()
-            .setBufferDurationsMs(15_000, 50_000, 1_500, 3_000)
+            .setBufferDurationsMs(
+                15_000,
+                50_000,
+                1_500,
+                3_000
+            )
             .build()
 
         return ExoPlayer.Builder(application)
@@ -50,7 +53,7 @@ class PlayerViewModel(private val application: Application) : AndroidViewModel(a
             .apply {
                 addListener(object : Player.Listener {
                     override fun onPlaybackStateChanged(playbackState: Int) {
-                        val now = SystemClock.elapsedRealtime()
+                        val now = android.os.SystemClock.elapsedRealtime()
                         _playerState.value = when (playbackState) {
                             Player.STATE_BUFFERING -> {
                                 telemetry.onBufferingStarted(now)
@@ -67,16 +70,12 @@ class PlayerViewModel(private val application: Application) : AndroidViewModel(a
                         }
                     }
 
-                    override fun onVideoInputFormatChanged(format: Format) {
-                        telemetry.onVideoFormatChanged(format)
-                    }
-
                     override fun onPlayerError(error: PlaybackException) {
                         telemetry.onPlaybackError(error.errorCode, error.message)
-                        val fallbackIndex = nextPlayableUrlIndex(currentStreamUrls, currentUrlIndex)
+                        val fallbackIndex = nextPlayableUrlIndex(currentChannel, currentUrlIndex)
                         if (fallbackIndex != null && retryCount < MAX_AUTOMATIC_FALLBACKS) {
                             retryCount++
-                            playStream(currentStreamUrls, fallbackIndex)
+                            playCurrentSource(fallbackIndex)
                         } else {
                             _playerState.value = PlayerState.Error(
                                 error.message ?: "Pemutaran gagal"
@@ -88,86 +87,96 @@ class PlayerViewModel(private val application: Application) : AndroidViewModel(a
     }
 
     fun playChannel(channel: TvChannel, urlIndex: Int = 0) {
-        playStream(channel.urls, urlIndex)
+        playSources(channel.urls, channelLabel = channel.nama, urlIndex = urlIndex) {
+            currentChannel = channel.copy(urls = it)
+        }
     }
 
-    fun playMovie(movie: VodMovie, urlIndex: Int = 0) {
-        val url = movie.url.trim()
-        if (!StreamUrlValidator.isPlayableHttpUrl(url)) {
-            currentStreamUrls = emptyList()
-            currentUrlIndex = -1
-            _playerState.value = PlayerState.Error(
-                "Film belum memiliki sumber streaming yang valid"
-            )
+    fun playMovie(movie: VodMovie) {
+        playSources(listOf(movie.url), channelLabel = movie.title)
+    }
+
+    fun playSeries(series: Series) {
+        val episode = series.episodes.firstOrNull { StreamUrlValidator.isPlayableHttpUrl(it.url) }
+        if (episode == null) {
+            _playerState.value = PlayerState.Error("Series belum memiliki episode dengan sumber video yang valid")
             return
         }
-        playStream(listOf(url), urlIndex)
+        playSources(listOf(episode.url), channelLabel = "${series.title} • ${episode.label}")
     }
 
-    fun playSeries(series: Series, urlIndex: Int = 0) {
-        val episodeUrls = series.episodes
-            .map { it.url }
-            .filter(StreamUrlValidator::isPlayableHttpUrl)
-
-        if (episodeUrls.isEmpty()) {
-            currentStreamUrls = emptyList()
-            currentUrlIndex = -1
-            _playerState.value = PlayerState.Error(
-                "Series belum memiliki sumber episode yang dapat diputar"
-            )
-            return
-        }
-
-        playStream(episodeUrls, urlIndex)
-    }
-
-    private fun playStream(urls: List<String>, urlIndex: Int = 0) {
-        val playableUrls = urls
-            .map(String::trim)
-            .filter(StreamUrlValidator::isPlayableHttpUrl)
-            .distinct()
-
+    private fun playSources(
+        sourceUrls: List<String>,
+        channelLabel: String,
+        urlIndex: Int = 0,
+        onValidated: (List<String>) -> Unit = {}
+    ) {
+        val playableUrls = sourceUrls.filter(StreamUrlValidator::isPlayableHttpUrl)
         if (playableUrls.isEmpty()) {
-            currentStreamUrls = emptyList()
-            currentUrlIndex = -1
-            _playerState.value = PlayerState.Error("Tidak ada sumber stream yang valid")
+            _playerState.value = PlayerState.Error("$channelLabel belum memiliki sumber video yang valid")
             return
         }
 
         if (urlIndex !in playableUrls.indices) {
-            _playerState.value = PlayerState.Error("Sumber stream yang diminta tidak tersedia")
+            _playerState.value = PlayerState.Error("Tidak ada sumber stream yang dapat diputar")
             return
         }
 
-        currentStreamUrls = playableUrls
+        onValidated(playableUrls)
         currentUrlIndex = urlIndex
         retryCount = 0
-        telemetry.onPlaybackStarted(SystemClock.elapsedRealtime())
+        telemetry.onPlaybackStarted(android.os.SystemClock.elapsedRealtime())
+        playCurrentSource(urlIndex)
+    }
 
-        player.setMediaItem(MediaItem.fromUri(playableUrls[urlIndex]))
+    private fun playCurrentSource(urlIndex: Int) {
+        val urls = currentChannel?.urls ?: currentPlayableUrlsFromCurrentMedia()
+        if (urlIndex !in urls.indices) {
+            _playerState.value = PlayerState.Error("Sumber video tidak tersedia")
+            return
+        }
+
+        currentUrlIndex = urlIndex
+        player.setMediaItem(MediaItem.fromUri(urls[urlIndex]))
         player.prepare()
         player.playWhenReady = true
         _playerState.value = PlayerState.Buffering
     }
 
-    fun retryPlayback(): Boolean {
-        val nextIndex = nextPlayableUrlIndex(currentStreamUrls, currentUrlIndex)
-            ?: currentStreamUrls.indices.firstOrNull()
-            ?: return false
+    private fun currentPlayableUrlsFromCurrentMedia(): List<String> =
+        player.currentMediaItem?.localConfiguration?.uri?.toString()?.let(::listOf).orEmpty()
 
-        retryCount = 0
-        playStream(currentStreamUrls, nextIndex)
-        return true
+    fun retryPlayback(): Boolean {
+        val nextIndex = nextPlayableUrlIndex(currentChannel, currentUrlIndex)
+        if (nextIndex != null) {
+            retryCount = 0
+            playCurrentSource(nextIndex)
+            return true
+        }
+
+        val currentUrl = player.currentMediaItem?.localConfiguration?.uri?.toString()
+        if (currentUrl != null && StreamUrlValidator.isPlayableHttpUrl(currentUrl)) {
+            retryCount = 0
+            telemetry.onPlaybackStarted(android.os.SystemClock.elapsedRealtime())
+            player.prepare()
+            player.playWhenReady = true
+            _playerState.value = PlayerState.Buffering
+            return true
+        }
+
+        _playerState.value = PlayerState.Error("Semua sumber stream gagal")
+        return false
     }
 
-    private fun nextPlayableUrlIndex(urls: List<String>, currentIndex: Int): Int? {
+    private fun nextPlayableUrlIndex(channel: TvChannel?, currentIndex: Int): Int? {
+        val urls = channel?.urls.orEmpty().filter(StreamUrlValidator::isPlayableHttpUrl)
         return urls.indices.firstOrNull { it > currentIndex }
     }
 
     fun releasePlayer() {
         _player?.release()
         _player = null
-        currentStreamUrls = emptyList()
+        currentChannel = null
         currentUrlIndex = -1
         retryCount = 0
         _playerState.value = PlayerState.Idle
