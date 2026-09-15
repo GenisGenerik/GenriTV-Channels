@@ -24,10 +24,21 @@ jobs:
         env:
           PLAYLIST_SOURCE: ${{ secrets.PLAYLIST_SOURCE }}
       - name: Commit and Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
-          force_with_lease: true
-          directory: '.'
-          commit_message: "Auto-update IPTV playlist"
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          
+          # 1. Ambil update terbaru dari remote TERLEBIH DAHULU agar tidak ketinggalan
+          git fetch origin main
+          git pull --rebase origin main
+          
+          # 2. Baru tambahkan file hasil generate dari script Python
+          git add generated/
+          
+          # 3. Cek apakah ada perubahan untuk di-commit
+          if git diff --quiet --cached; then
+            echo "No changes to commit"
+          else
+            git commit -m "Auto-update IPTV playlist"
+            git push origin main
+          fi
