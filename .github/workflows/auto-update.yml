@@ -28,14 +28,14 @@ jobs:
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
           
-          # 1. Ambil update terbaru dari remote TERLEBIH DAHULU agar tidak ketinggalan
+          # Ambil update terbaru dari remote dan gabungkan lewat rebase dulu
           git fetch origin main
-          git pull --rebase origin main
+          git rebase origin/main || git rebase --abort
           
-          # 2. Baru tambahkan file hasil generate dari script Python
+          # Tambahkan perubahan hasil pipeline
           git add generated/
           
-          # 3. Cek apakah ada perubahan untuk di-commit
+          # Cek apakah ada perubahan
           if git diff --quiet --cached; then
             echo "No changes to commit"
           else
