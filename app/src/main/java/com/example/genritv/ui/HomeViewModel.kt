@@ -3,6 +3,7 @@ package com.example.genritv.ui
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.genritv.data.ChannelClassifier
 import com.example.genritv.data.SeriesRepository
 import com.example.genritv.data.UnifiedChannelRepository
 import com.example.genritv.data.VodRepository
@@ -31,70 +32,79 @@ class HomeViewModel : ViewModel() {
     val selectedCategory: StateFlow<HomeCategory> = _selectedCategory
 
     val homeState: StateFlow<HomeState> = combine(
-        _channels, _movies, _series, _searchQuery, _selectedCategory
+        _channels,
+        _movies,
+        _series,
+        _searchQuery,
+        _selectedCategory
     ) { channels, movies, series, query, category ->
+        val normalizedQuery = query.trim()
+
         val filteredChannels = when (category) {
             HomeCategory.TV_NASIONAL -> channels.filter { channel ->
-                isNationalChannel(channel) && channel.nama.contains(query, ignoreCase = true)
+                ChannelClassifier.isNational(channel) && matches(channel.nama, normalizedQuery)
             }
             HomeCategory.TV_REGIONAL -> channels.filter { channel ->
-                isRegionalChannel(channel) && channel.nama.contains(query, ignoreCase = true)
+                ChannelClassifier.isRegional(channel) && matches(channel.nama, normalizedQuery)
             }
-            HomeCategory.HOME -> channels.filter { it.nama.contains(query, ignoreCase = true) }
+            HomeCategory.HOME -> channels.filter { matches(it.nama, normalizedQuery) }
             else -> emptyList()
         }
 
         val filteredMovies = if (category == HomeCategory.HOME || category == HomeCategory.MOVIES) {
-            movies.filter { it.title.contains(query, ignoreCase = true) }
-        } else emptyList()
+            movies.filter { matches(it.title, normalizedQuery) }
+        } else {
+            emptyList()
+        }
 
         val filteredSeries = if (category == HomeCategory.HOME || category == HomeCategory.SERIES) {
-            series.filter { it.title.contains(query, ignoreCase = true) }
-        } else emptyList()
+            series.filter { matches(it.title, normalizedQuery) }
+        } else {
+            emptyList()
+        }
 
         HomeState(
             channels = filteredChannels,
             movies = filteredMovies,
             seriesList = filteredSeries,
             selectedCategory = category,
-            isSearching = query.isNotEmpty()
+            isSearching = normalizedQuery.isNotEmpty()
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeState())
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = HomeState()
+    )
 
     fun loadData(context: Context) {
         viewModelScope.launch {
-            val loadedChannels = UnifiedChannelRepository.loadChannels(context)
-            _channels.value = loadedChannels
-            _movies.value = VodRepository.getMovies()
-            _series.value = SeriesRepository.getSeries()
+            runCatching {
+                Triple(
+                    UnifiedChannelRepository.loadChannels(context.applicationContext),
+                    VodRepository.getMovies(),
+                    SeriesRepository.getSeries()
+                )
+            }.onSuccess { (channels, movies, series) ->
+                _channels.value = channels
+                _movies.value = movies
+                _series.value = series
+            }
         }
     }
 
     fun onSearchQueryChange(query: String) {
-        _searchQuery.value = query
+        _searchQuery.value = query.take(MAX_SEARCH_LENGTH)
     }
 
     fun onCategorySelected(category: HomeCategory) {
         _selectedCategory.value = category
     }
 
-    private fun isNationalChannel(channel: TvChannel): Boolean {
-        val group = channel.grup.orEmpty()
-        val name = channel.nama
-        val nationalKeywords = listOf(
-            "nasional", "indonesia", "rcti", "sctv", "indosiar", "antv",
-            "trans", "tvone", "metro", "kompas", "mnc", "gtv", "inews",
-            "tvri", "rtv", "net", "garuda", "moji", "daai"
-        )
-        return nationalKeywords.any { keyword ->
-            group.contains(keyword, ignoreCase = true) || name.contains(keyword, ignoreCase = true)
-        }
-    }
+    private fun matches(value: String, query: String): Boolean =
+        query.isEmpty() || value.contains(query, ignoreCase = true)
 
-    private fun isRegionalChannel(channel: TvChannel): Boolean {
-        val group = channel.grup.orEmpty()
-        return group.contains("regional", ignoreCase = true) ||
-            group.contains("daerah", ignoreCase = true)
+    companion object {
+        private const val MAX_SEARCH_LENGTH = 80
     }
 }
 
