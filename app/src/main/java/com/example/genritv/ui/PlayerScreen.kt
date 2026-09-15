@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,6 +40,8 @@ fun PlayerScreen(
     channelName: String,
     showChannelName: Boolean,
     channelLogo: String?,
+    channelIndex: Int,
+    channelCount: Int,
     isLoading: Boolean,
     currentTime: String,
     showError: Boolean,
@@ -48,8 +51,13 @@ fun PlayerScreen(
     position: Long,
     duration: Long,
     resizeMode: Int,
-    onRetry: () -> Unit
+    onRetry: () -> Unit,
+    onExit: () -> Unit
 ) {
+    DisposableEffect(Unit) {
+        onDispose(onExit)
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         AndroidView(
             modifier = Modifier.fillMaxSize(),
@@ -67,6 +75,25 @@ fun PlayerScreen(
             }
         )
 
+        if (currentMode == MainActivity.AppMode.CHANNELS) {
+            Row(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(24.dp)
+                    .background(Color.Black.copy(alpha = 0.60f), RoundedCornerShape(18.dp))
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(10.dp)
+                        .background(Color.Red, RoundedCornerShape(50))
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("LIVE", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            }
+        }
+
         Text(
             text = currentTime.toLongOrNull()?.let(::formatTime).orEmpty(),
             color = Color.White,
@@ -76,16 +103,19 @@ fun PlayerScreen(
 
         AnimatedVisibility(
             visible = showChannelName,
-            enter = fadeIn(animationSpec = tween(300)),
-            exit = fadeOut(animationSpec = tween(500))
+            enter = fadeIn(animationSpec = tween(250)),
+            exit = fadeOut(animationSpec = tween(350))
         ) {
             Column(
-                modifier = Modifier.fillMaxSize().padding(48.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(48.dp),
                 verticalArrangement = Arrangement.Bottom
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
+                        .fillMaxWidth()
                         .background(Color.Black.copy(alpha = 0.72f), RoundedCornerShape(12.dp))
                         .padding(horizontal = 20.dp, vertical = 12.dp)
                 ) {
@@ -95,9 +125,20 @@ fun PlayerScreen(
                         modifier = Modifier.size(60.dp)
                     )
                     Spacer(modifier = Modifier.width(20.dp))
-                    Column {
+                    Column(modifier = Modifier.weight(1f)) {
                         Text(channelName, color = Color.White, fontSize = 32.sp, fontWeight = FontWeight.Bold)
-                        if (currentMode != MainActivity.AppMode.CHANNELS) {
+                        if (currentMode == MainActivity.AppMode.CHANNELS && channelCount > 0) {
+                            Text(
+                                "CH ${channelIndex + 1} • $channelCount channel",
+                                color = Color.White.copy(alpha = 0.72f),
+                                fontSize = 17.sp
+                            )
+                            Text(
+                                "▲ / ▼  Ganti channel   •   BACK  Kembali",
+                                color = Color.White.copy(alpha = 0.58f),
+                                fontSize = 15.sp
+                            )
+                        } else if (currentMode != MainActivity.AppMode.CHANNELS) {
                             Text(
                                 if (currentMode == MainActivity.AppMode.VOD) "Film" else "Series",
                                 color = Color.Yellow,
@@ -113,7 +154,6 @@ fun PlayerScreen(
                         Text(ratioText, color = Color.White.copy(alpha = 0.6f), fontSize = 16.sp)
                     }
                     if (currentMode != MainActivity.AppMode.CHANNELS) {
-                        Spacer(modifier = Modifier.weight(1f))
                         Icon(
                             imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
                             contentDescription = if (isPlaying) "Sedang diputar" else "Dijeda",
