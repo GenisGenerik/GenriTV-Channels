@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
-import androidx.activity.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -66,23 +65,6 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val player = playerViewModel.player
             val playerState by playerViewModel.playerState.collectAsStateWithLifecycle()
-
-            BackHandler(enabled = true) {
-                if (currentRoute == "player") {
-                    player.stop()
-                    navController.popBackStack("home", inclusive = false)
-                } else {
-                    playerViewModel.releasePlayer()
-                    finishAndRemoveTask()
-                }
-            }
-
-            navController.addOnDestinationChangedListener { _, destination, _ ->
-                currentRoute = destination.route ?: "home"
-                if (currentRoute != "player") {
-                    player.stop()
-                }
-            }
 
             TVNavigation(
                 navController = navController,
