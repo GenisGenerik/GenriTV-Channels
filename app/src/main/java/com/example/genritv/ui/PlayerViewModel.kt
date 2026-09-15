@@ -33,6 +33,7 @@ class PlayerViewModel(private val application: Application) : AndroidViewModel(a
                             Player.STATE_BUFFERING -> PlayerState.Buffering
                             Player.STATE_READY -> PlayerState.Ready
                             Player.STATE_IDLE -> PlayerState.Idle
+                            Player.STATE_ENDED -> PlayerState.Ended
                             else -> _playerState.value
                         }
                     }
@@ -43,7 +44,7 @@ class PlayerViewModel(private val application: Application) : AndroidViewModel(a
                 })
             }
 
-    fun playChannel(channel: TvChannel, urlIndex: Int = 0, isVod: Boolean = false) {
+    fun playChannel(channel: TvChannel, urlIndex: Int = 0) {
         if (urlIndex !in channel.urls.indices) {
             _playerState.value = PlayerState.Error("No more stream URLs available")
             return
@@ -71,16 +72,6 @@ class PlayerViewModel(private val application: Application) : AndroidViewModel(a
         return true
     }
 
-    fun playFallback(channel: TvChannel): Boolean {
-        if (channel.urls.isEmpty()) {
-            _playerState.value = PlayerState.Error("No stream URLs available")
-            return false
-        }
-        currentUrlIndex = 0
-        playChannel(channel, 0)
-        return true
-    }
-
     fun releasePlayer() {
         _player?.release()
         _player = null
@@ -99,5 +90,6 @@ sealed class PlayerState {
     data object Idle : PlayerState()
     data object Buffering : PlayerState()
     data object Ready : PlayerState()
+    data object Ended : PlayerState()
     data class Error(val message: String) : PlayerState()
 }
