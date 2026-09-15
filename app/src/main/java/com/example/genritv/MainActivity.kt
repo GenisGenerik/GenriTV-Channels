@@ -6,7 +6,6 @@ import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -15,9 +14,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.example.genritv.data.UnifiedChannelRepository
-import com.example.genritv.model.Series
 import com.example.genritv.model.TvChannel
-import com.example.genritv.model.VodMovie
 import com.example.genritv.ui.PlayerScreen
 import com.example.genritv.ui.PlayerViewModel
 import com.example.genritv.ui.TVNavigation
@@ -69,10 +66,6 @@ class MainActivity : ComponentActivity() {
             val player = playerViewModel.player
             val playerState by playerViewModel.playerState.collectAsStateWithLifecycle()
 
-            LaunchedEffect(playerState) {
-                // Keep the player UI subscribed to state changes from Media3.
-            }
-
             DisposableEffect(navController) {
                 val listener = androidx.navigation.NavController.OnDestinationChangedListener { _, destination, _ ->
                     currentRoute = destination.route ?: "home"
@@ -121,11 +114,7 @@ class MainActivity : ComponentActivity() {
                         duration = player.duration.coerceAtLeast(0L),
                         resizeMode = resizeMode,
                         onRetry = {
-                            when (currentMode) {
-                                AppMode.CHANNELS, AppMode.VOD, AppMode.SERIES -> {
-                                    playerViewModel.retryPlayback()
-                                }
-                            }
+                            playerViewModel.retryPlayback()
                         }
                     )
                 }
