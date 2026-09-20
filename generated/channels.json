@@ -70,7 +70,7 @@
     "nama": "TransTV HD",
     "urls": [
       "http://119.82.250.109:8080/nl.m3u8?id=1145",
-      "https://cdnjktbpid37.cubmu.com/riutx01-22b1f3c4ac0e47a0ed0e3305661027ee/dash/VHJhbnNUVg/manifest.mpd",
+      "http://filex.me:8080//@singh_tesla_7207492/puWnhEGsXpK3/302312",
       "https://green-night-d2b4.iontv.workers.dev/transtv.m3u8"
     ],
     "logo": "https://thumbor.prod.vidiocdn.com/__j35q7LPpcS2EgkR7v8GpE4USQ=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/733/ecaa60.png",
@@ -82,8 +82,8 @@
     "nama": "Trans7 HD",
     "urls": [
       "http://119.82.250.109:8080/nl.m3u8?id=1002",
-      "https://green-night-d2b4.iontv.workers.dev/trans7.m3u8",
-      "https://cdnjktbpid37.cubmu.com/riutx01-22b1f3c4ac0e47a0ed0e3305661027ee/dash/VFJBTlM3LW15/manifest.mpd"
+      "http://filex.me:8080//@singh_tesla_7207492/puWnhEGsXpK3/302311",
+      "https://green-night-d2b4.iontv.workers.dev/trans7.m3u8"
     ],
     "logo": "https://thumbor.prod.vidiocdn.com/-MEB2a6J4sB6SvBDimCb7JYP6WY=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/734/131514.png",
     "grup": "Indonesia Channels",
@@ -117,7 +117,7 @@
     "nama": "RCTI HD",
     "urls": [
       "https://mncmedia.malingtv.workers.dev/rcti.m3u8",
-      "https://cdnjktbpid37.cubmu.com/riutx01-22b1f3c4ac0e47a0ed0e3305661027ee/dash/UkNUSS1DaGFubmVs/manifest.mpd"
+      "http://filex.me:8080//@singh_tesla_7207492/puWnhEGsXpK3/302297"
     ],
     "logo": "https://thumbor.prod.vidiocdn.com/9c-sEWp6Du7DoWDn56cjma0gMpY=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/665/337c4d.png",
     "grup": "Indonesia Channels",
@@ -128,7 +128,7 @@
     "nama": "MNC TV HD",
     "urls": [
       "https://mncmedia.malingtv.workers.dev/mnctv.m3u8",
-      "https://cdnjktbpid37.cubmu.com/riutx01-22b1f3c4ac0e47a0ed0e3305661027ee/dash/TU5DVFY/manifest.mpd"
+      "http://filex.me:8080//@singh_tesla_7207492/puWnhEGsXpK3/302278"
     ],
     "logo": "https://thumbor.prod.vidiocdn.com/A4rNvFKdLq9QYWcA9c-uvL38=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/665/337c4d.png",
     "grup": "Indonesia Channels",
@@ -1340,8 +1340,8 @@
   {
     "nama": "HBO",
     "urls": [
-      "https://cdnjktbpid37.cubmu.com/riutx01-22b1f3c4ac0e47a0ed0e3305661027ee/dash/SEJPLW15/manifest.mpd",
-      "https://cdnjktbpid37.cubmu.com/riutx01-22b1f3c4ac0e47a0ed0e3305661027ee/dash/SEJPLVNpZ25hdHVyZS1teQ/manifest.mpd"
+      "https://cdnjktbpid37.cubmu.com/riutx01-439abf566997b187117993103dfd8508/dash/SEJPLW15/manifest.mpd",
+      "https://cdnjktbpid37.cubmu.com/riutx01-439abf566997b187117993103dfd8508/dash/SEJPLVNpZ25hdHVyZS1teQ/manifest.mpd"
     ],
     "logo": "https://iili.io/Ju79f8g.png",
     "grup": "HBO Group",
@@ -2421,6 +2421,16 @@
     "headers": []
   },
   {
+    "nama": "Mix Hollywood (1080p)",
+    "urls": [
+      "https://ml-pull-hwc.myco.io/MixTV/hls/index.m3u8"
+    ],
+    "logo": "https://i.imgur.com/1ENdbZn.png",
+    "grup": "Egypt",
+    "tvgId": "MixHollywood.eg@SD",
+    "headers": []
+  },
+  {
     "nama": "Miramax Film",
     "urls": [
       "https://otte.live.fly.ww.aiv-cdn.net/pdx-nitro/live/clients/dash/enc/jkep4tcfuk/out/v1/13282695f8bb45ae9912e9321bba21b8/cenc.mpd"
@@ -2528,6 +2538,16 @@
     "logo": "https://shahid.mbc.net/mediaObject/c2b6a882-458b-446e-b0fe-f97f7992149a?height=auto&width=144&croppingPoint=&version=1&type=png",
     "grup": "Saudi Arabia",
     "tvgId": "MBCMood.sa@HD",
+    "headers": []
+  },
+  {
+    "nama": "MBC Masr Drama (1080p)",
+    "urls": [
+      "https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-masr-drama/567b703c19ede6598222de81b0e4508b/index.m3u8"
+    ],
+    "logo": "https://media0070.elcinema.com/tvguide/1399_1.png",
+    "grup": "Egypt",
+    "tvgId": "MBCMasrDrama.sa@SD",
     "headers": []
   },
   {
@@ -3033,7 +3053,7 @@
   {
     "nama": "HBO Hits",
     "urls": [
-      "https://cdnjktbpid37.cubmu.com/riutx01-22b1f3c4ac0e47a0ed0e3305661027ee/dash/SEJPIEhpdHM/manifest.mpd"
+      "https://cdnjktbpid37.cubmu.com/riutx01-439abf566997b187117993103dfd8508/dash/SEJPIEhpdHM/manifest.mpd"
     ],
     "logo": "https://iili.io/Ju79nwv.png",
     "grup": "HBO Group",
@@ -3053,7 +3073,7 @@
   {
     "nama": "HBO Family",
     "urls": [
-      "https://cdnjktbpid37.cubmu.com/riutx01-22b1f3c4ac0e47a0ed0e3305661027ee/dash/SEJPLUZhbWlseS1teQ/manifest.mpd"
+      "https://cdnjktbpid37.cubmu.com/riutx01-439abf566997b187117993103dfd8508/dash/SEJPLUZhbWlseS1teQ/manifest.mpd"
     ],
     "logo": "https://iili.io/Ju79otR.png",
     "grup": "HBO Group",
@@ -3853,7 +3873,7 @@
   {
     "nama": "Cinemax",
     "urls": [
-      "https://cdnjktbpid37.cubmu.com/riutx01-22b1f3c4ac0e47a0ed0e3305661027ee/dash/Q2luZW1heA/manifest.mpd"
+      "https://cdnjktbpid37.cubmu.com/riutx01-439abf566997b187117993103dfd8508/dash/Q2luZW1heA/manifest.mpd"
     ],
     "logo": "https://iili.io/Ju79znp.png",
     "grup": "HBO Group",
@@ -4358,36 +4378,6 @@
     "logo": "https://wwwimage-tve.cbsstatic.com/base/files/seo/cbs_seo_1200x627_1.jpg",
     "grup": "Sports",
     "tvgId": "auto.cbs.champions",
-    "headers": []
-  },
-  {
-    "nama": "CBC Sofra (576p)",
-    "urls": [
-      "https://flu.systemnet.tv/CBCSofra/index.m3u8"
-    ],
-    "logo": "https://i.imgur.com/YAdk2WR.png",
-    "grup": "Egypt",
-    "tvgId": "CBCSofra.eg@SD",
-    "headers": []
-  },
-  {
-    "nama": "CBC Drama (576p)",
-    "urls": [
-      "https://flu.systemnet.tv/CBCDrama/index.m3u8"
-    ],
-    "logo": "https://i.imgur.com/I8YdakH.png",
-    "grup": "Egypt",
-    "tvgId": "CBCDrama.eg@SD",
-    "headers": []
-  },
-  {
-    "nama": "CBC (576p)",
-    "urls": [
-      "https://flu.systemnet.tv/CBC/index.m3u8"
-    ],
-    "logo": "https://i.imgur.com/8apNaLP.png",
-    "grup": "Egypt",
-    "tvgId": "CBC.eg@SD",
     "headers": []
   },
   {
@@ -7791,9 +7781,19 @@
     "headers": []
   },
   {
+    "nama": ".sci-fi (576p)",
+    "urls": [
+      "http://stream.mcquack.net/180/index.m3u8"
+    ],
+    "logo": "https://i.imgur.com/nSSUHcg.png",
+    "grup": "Russia",
+    "tvgId": "scifi.ru@SD",
+    "headers": []
+  },
+  {
     "nama": ".black (576p)",
     "urls": [
-      "http://str2.iptvhd.ru:8080/Sony_Turbo/index.m3u8"
+      "http://stream.mcquack.net/263/index.m3u8"
     ],
     "logo": "https://i.imgur.com/Q4A6ci4.png",
     "grup": "Russia",
