@@ -41,6 +41,20 @@
     "headers": []
   },
   {
+    "nama": "SCTV HD",
+    "urls": [
+      "https://op-flashcon-digdayahd-1.dens.tv/h/h217/01.m3u8?app_type=web&userid=lite&chname=SCTV",
+      "http://filex.me:8080//@singh_tesla_7207492/puWnhEGsXpK3/302301.m3u8",
+      "https://vidsemar.pages.dev/terraluna2/204.mpd",
+      "https://cdnjktcyber05.transvision.co.id/riutx01-439abf566997b187117993103dfd8508/dash/U0NUVi1teQ/manifest.mpd",
+      "https://cdnbal1.indihometv.com/atm/DASH/sctv/sctv-avc1_2500000=7-3277707030000000.mpd"
+    ],
+    "logo": "https://thumbor.prod.vidiocdn.com/kH-K9J4cROqL0TZrAyQhw7P5pBk=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/204/4e9f5c.png",
+    "grup": "Indonesia Channels",
+    "tvgId": "SCTV.id",
+    "headers": []
+  },
+  {
     "nama": "TransTV HD",
     "urls": [
       "http://119.82.250.109:8080/nl.m3u8?id=1145",
@@ -67,19 +81,6 @@
     "headers": []
   },
   {
-    "nama": "SCTV HD",
-    "urls": [
-      "https://op-flashcon-digdayahd-1.dens.tv/h/h217/01.m3u8?app_type=web&userid=lite&chname=SCTV",
-      "http://filex.me:8080//@singh_tesla_7207492/puWnhEGsXpK3/302301.m3u8",
-      "https://cdnjktcyber05.transvision.co.id/riutx01-439abf566997b187117993103dfd8508/dash/U0NUVi1teQ/manifest.mpd",
-      "https://cdnbal1.indihometv.com/atm/DASH/sctv/sctv-avc1_2500000=7-3277707030000000.mpd"
-    ],
-    "logo": "https://thumbor.prod.vidiocdn.com/kH-K9J4cROqL0TZrAyQhw7P5pBk=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/204/4e9f5c.png",
-    "grup": "Indonesia Channels",
-    "tvgId": "SCTV.id",
-    "headers": []
-  },
-  {
     "nama": "Metro TV HD",
     "urls": [
       "https://edge.medcom.id/live-edge/smil:metro.smil/playlist.m3u8",
@@ -90,6 +91,19 @@
     "logo": "https://thumbor.prod.vidiocdn.com/u0aa_S_rQeujrp5eR6LwXdertrI=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/777/ea8483.png",
     "grup": "Indonesia Channels",
     "tvgId": "MetroTV.id",
+    "headers": []
+  },
+  {
+    "nama": "Indosiar HD",
+    "urls": [
+      "https://op-flashcon-digdayahd-1.dens.tv/h/h207/01.m3u8",
+      "http://filex.me:8080//@singh_tesla_7207492/puWnhEGsXpK3/302264.m3u8",
+      "https://vidsemar.pages.dev/terraluna2/205.mpd",
+      "https://cdnjktcyber05.transvision.co.id/riutx01-439abf566997b187117993103dfd8508/dash/SW5kb3NpYXI/manifest.mpd"
+    ],
+    "logo": "https://thumbor.prod.vidiocdn.com/0plBZ7Gso7gNBJxid9ksA8HMGxc=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/205/54ab19.png",
+    "grup": "Indonesia Channels",
+    "tvgId": "Indosiar.id",
     "headers": []
   },
   {
@@ -126,18 +140,6 @@
     "logo": "https://thumbor.prod.vidiocdn.com/Pf8yLSfHEUZeRI9tUzLDR2U8Zow=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/874/042ca3.png",
     "grup": "Indonesia Channels",
     "tvgId": "KompasTV.id",
-    "headers": []
-  },
-  {
-    "nama": "Indosiar HD",
-    "urls": [
-      "https://op-flashcon-digdayahd-1.dens.tv/h/h207/01.m3u8",
-      "http://filex.me:8080//@singh_tesla_7207492/puWnhEGsXpK3/302264.m3u8",
-      "https://cdnjktcyber05.transvision.co.id/riutx01-439abf566997b187117993103dfd8508/dash/SW5kb3NpYXI/manifest.mpd"
-    ],
-    "logo": "https://thumbor.prod.vidiocdn.com/0plBZ7Gso7gNBJxid9ksA8HMGxc=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/205/54ab19.png",
-    "grup": "Indonesia Channels",
-    "tvgId": "Indosiar.id",
     "headers": []
   },
   {
@@ -245,17 +247,6 @@
     "logo": "https://thumbor.prod.vidiocdn.com/APQ6a9vXvN6lU1zjeyL15IV_AJQ=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/783/07750c.png",
     "grup": "Indonesia Channels",
     "tvgId": "tvOne.id",
-    "headers": []
-  },
-  {
-    "nama": "SindoNews",
-    "urls": [
-      "https://d43tg978oium5.cloudfront.net/out/v1/8c2df39f9b2842fbb997b89378841ad9/index.mpd",
-      "https://cilok99.serv00.net/ythls/xxxx.py/play.m3u8?id=UCGfXjFgIUUTUUlzdG6BenXA"
-    ],
-    "logo": "https://nabelsakha.com/wp-content/uploads/2023/10/Sindonews.png",
-    "grup": "Indonesia Channels",
-    "tvgId": "SindoNewsTV.id",
     "headers": []
   },
   {
@@ -502,6 +493,16 @@
     "logo": "https://upload.wikimedia.org/wikipedia/commons/9/91/Stara_TV_Sumedang_fix.png",
     "grup": "Indonesia Channels",
     "tvgId": "StaraTV.id@Bojonegoro",
+    "headers": []
+  },
+  {
+    "nama": "SindoNews",
+    "urls": [
+      "https://cilok99.serv00.net/ythls/xxxx.py/play.m3u8?id=UCGfXjFgIUUTUUlzdG6BenXA"
+    ],
+    "logo": "https://nabelsakha.com/wp-content/uploads/2023/10/Sindonews.png",
+    "grup": "Indonesia Channels",
+    "tvgId": "SindoNewsTV.id",
     "headers": []
   },
   {
@@ -1172,6 +1173,16 @@
     "logo": "https://upload.wikimedia.org/wikipedia/commons/7/72/Atambua_TV.png",
     "grup": "Indonesia Channels",
     "tvgId": "AtambuaTV.id@HD",
+    "headers": []
+  },
+  {
+    "nama": "Asian Food Network",
+    "urls": [
+      "http://filex.me:8080//@singh_tesla_7207492/puWnhEGsXpK3/302207"
+    ],
+    "logo": "https://static.wikia.nocookie.net/tvfanon6528/images/f/f9/Asian_Food_Network_%282019-.n.v.%29.png",
+    "grup": "Entertainment & LifeStyle",
+    "tvgId": "AFN (HD).sg",
     "headers": []
   },
   {
@@ -3176,6 +3187,16 @@
     "logo": "https://i.imgur.com/MaLNfJG.png",
     "grup": "South Africa",
     "tvgId": "HomebaseTV.za@SD",
+    "headers": []
+  },
+  {
+    "nama": "HitsMovies (Maxstream)",
+    "urls": [
+      "https://cdnbal1.indihometv.com/atm/DASH/hitsmovie/hitsmovie-avc1_2500000=7-3277707030000000.mpd"
+    ],
+    "logo": "https://static.wikia.nocookie.net/logos/images/1/16/HITS_Movies_logo.png/revision/latest/scale-to-width-down/423?cb=20220323123229&path-prefix=vi",
+    "grup": "Premium Movies",
+    "tvgId": "HitsMovies.id",
     "headers": []
   },
   {
