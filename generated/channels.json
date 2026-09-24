@@ -44,7 +44,6 @@
     "nama": "SCTV HD",
     "urls": [
       "https://op-flashcon-digdayahd-1.dens.tv/h/h217/01.m3u8?app_type=web&userid=lite&chname=SCTV",
-      "http://filex.me:8080//@singh_tesla_7207492/puWnhEGsXpK3/302301.m3u8",
       "https://vidsemar.pages.dev/terraluna2/204.mpd",
       "https://cdnjktcyber05.transvision.co.id/riutx01-439abf566997b187117993103dfd8508/dash/U0NUVi1teQ/manifest.mpd",
       "https://cdnbal1.indihometv.com/atm/DASH/sctv/sctv-avc1_2500000=7-3277707030000000.mpd"
@@ -52,32 +51,6 @@
     "logo": "https://thumbor.prod.vidiocdn.com/kH-K9J4cROqL0TZrAyQhw7P5pBk=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/204/4e9f5c.png",
     "grup": "Indonesia Channels",
     "tvgId": "SCTV.id",
-    "headers": []
-  },
-  {
-    "nama": "TransTV HD",
-    "urls": [
-      "http://119.82.250.109:8080/nl.m3u8?id=1145",
-      "https://cdnjktcyber05.transvision.co.id/riutx01-439abf566997b187117993103dfd8508/dash/VHJhbnNUVg/manifest.mpd",
-      "http://filex.me:8080//@singh_tesla_7207492/puWnhEGsXpK3/302312",
-      "https://green-night-d2b4.iontv.workers.dev/transtv.m3u8"
-    ],
-    "logo": "https://thumbor.prod.vidiocdn.com/__j35q7LPpcS2EgkR7v8GpE4USQ=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/733/ecaa60.png",
-    "grup": "Indonesia Channels",
-    "tvgId": "TransTV.id",
-    "headers": []
-  },
-  {
-    "nama": "Trans7 HD",
-    "urls": [
-      "http://119.82.250.109:8080/nl.m3u8?id=1002",
-      "https://cdnjktcyber05.transvision.co.id/riutx01-439abf566997b187117993103dfd8508/dash/VFJBTlM3LW15/manifest.mpd",
-      "http://filex.me:8080//@singh_tesla_7207492/puWnhEGsXpK3/302311",
-      "https://green-night-d2b4.iontv.workers.dev/trans7.m3u8"
-    ],
-    "logo": "https://thumbor.prod.vidiocdn.com/-MEB2a6J4sB6SvBDimCb7JYP6WY=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/734/131514.png",
-    "grup": "Indonesia Channels",
-    "tvgId": "Trans7.id",
     "headers": []
   },
   {
@@ -107,27 +80,27 @@
     "headers": []
   },
   {
-    "nama": "RCTI HD",
+    "nama": "TransTV HD",
     "urls": [
-      "https://mncmedia.malingtv.workers.dev/rcti.m3u8",
-      "https://cdnjktcyber05.transvision.co.id/riutx01-439abf566997b187117993103dfd8508/dash/UkNUSS1DaGFubmVs/manifest.mpd",
-      "http://filex.me:8080//@singh_tesla_7207492/puWnhEGsXpK3/302297"
+      "http://119.82.250.109:8080/nl.m3u8?id=1145",
+      "https://cdnjktcyber05.transvision.co.id/riutx01-439abf566997b187117993103dfd8508/dash/VHJhbnNUVg/manifest.mpd",
+      "https://green-night-d2b4.iontv.workers.dev/transtv.m3u8"
     ],
-    "logo": "https://thumbor.prod.vidiocdn.com/9c-sEWp6Du7DoWDn56cjma0gMpY=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/665/337c4d.png",
+    "logo": "https://thumbor.prod.vidiocdn.com/__j35q7LPpcS2EgkR7v8GpE4USQ=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/733/ecaa60.png",
     "grup": "Indonesia Channels",
-    "tvgId": "RCTI.id",
+    "tvgId": "TransTV.id",
     "headers": []
   },
   {
-    "nama": "MNC TV HD",
+    "nama": "Trans7 HD",
     "urls": [
-      "https://mncmedia.malingtv.workers.dev/mnctv.m3u8",
-      "https://cdnjktcyber05.transvision.co.id/riutx01-439abf566997b187117993103dfd8508/dash/TU5DVFY/manifest.mpd",
-      "http://filex.me:8080//@singh_tesla_7207492/puWnhEGsXpK3/302278"
+      "http://119.82.250.109:8080/nl.m3u8?id=1002",
+      "https://cdnjktcyber05.transvision.co.id/riutx01-439abf566997b187117993103dfd8508/dash/VFJBTlM3LW15/manifest.mpd",
+      "https://green-night-d2b4.iontv.workers.dev/trans7.m3u8"
     ],
-    "logo": "https://thumbor.prod.vidiocdn.com/A4rNvFKdLq9QYWcA9c-uvL38=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/665/337c4d.png",
+    "logo": "https://thumbor.prod.vidiocdn.com/-MEB2a6J4sB6SvBDimCb7JYP6WY=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/734/131514.png",
     "grup": "Indonesia Channels",
-    "tvgId": "MNCTV.id",
+    "tvgId": "Trans7.id",
     "headers": []
   },
   {
@@ -151,6 +124,28 @@
     "logo": "https://thumbor.prod.vidiocdn.com/wSfbef0k6V3fn7rnZa4azgVrLcM=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/728/eb7747.png",
     "grup": "Indonesia Channels",
     "tvgId": "iNews.id",
+    "headers": []
+  },
+  {
+    "nama": "RCTI HD",
+    "urls": [
+      "https://mncmedia.malingtv.workers.dev/rcti.m3u8",
+      "https://cdnjktcyber05.transvision.co.id/riutx01-439abf566997b187117993103dfd8508/dash/UkNUSS1DaGFubmVs/manifest.mpd"
+    ],
+    "logo": "https://thumbor.prod.vidiocdn.com/9c-sEWp6Du7DoWDn56cjma0gMpY=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/665/337c4d.png",
+    "grup": "Indonesia Channels",
+    "tvgId": "RCTI.id",
+    "headers": []
+  },
+  {
+    "nama": "MNC TV HD",
+    "urls": [
+      "https://mncmedia.malingtv.workers.dev/mnctv.m3u8",
+      "https://cdnjktcyber05.transvision.co.id/riutx01-439abf566997b187117993103dfd8508/dash/TU5DVFY/manifest.mpd"
+    ],
+    "logo": "https://thumbor.prod.vidiocdn.com/A4rNvFKdLq9QYWcA9c-uvL38=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/665/337c4d.png",
+    "grup": "Indonesia Channels",
+    "tvgId": "MNCTV.id",
     "headers": []
   },
   {
@@ -302,17 +297,6 @@
     "logo": "https://img.favpng.com/5/15/14/beritasatu-com-logo-beritasatu-media-holdings-news-png-favpng-ascxjWXRYnY9w2tGEsZusEmJa.jpg",
     "grup": "Indonesia Channels",
     "tvgId": "BTV.id@SD",
-    "headers": []
-  },
-  {
-    "nama": "AXN (Transcorp)",
-    "urls": [
-      "https://cdnjktcyber05.transvision.co.id/riutx01-439abf566997b187117993103dfd8508/dash/QVhOLW15/manifest.mpd",
-      "https://cdnbal1.indihometv.com/atm/DASH/axn/axn-avc1_2500000=7-3277707030000000.mpd"
-    ],
-    "logo": "https://static.wikia.nocookie.net/logopedia/images/b/bb/AXN_2011.png/revision/latest?cb=20201126072546",
-    "grup": "Premium Movies",
-    "tvgId": "AXN.id",
     "headers": []
   },
   {
@@ -1226,13 +1210,13 @@
     "headers": []
   },
   {
-    "nama": "ABC Australia (Transcorp)",
+    "nama": "AXN (Transcorp)",
     "urls": [
-      "https://cdnjktcyber05.transvision.co.id/riutx01-439abf566997b187117993103dfd8508/dash/QUJDIEF1c3RyYWxpYQ/manifest.mpd"
+      "https://cdnjktcyber05.transvision.co.id/riutx01-439abf566997b187117993103dfd8508/dash/QVhOLW15/manifest.mpd"
     ],
-    "logo": "https://raw.githubusercontent.com/apistech/project/refs/heads/main/logo/image_ch_abcaustrlia.png",
-    "grup": "Entertainment & LifeStyle",
-    "tvgId": "ABCAustralia.au@SD",
+    "logo": "https://static.wikia.nocookie.net/logopedia/images/b/bb/AXN_2011.png/revision/latest?cb=20201126072546",
+    "grup": "Premium Movies",
+    "tvgId": "AXN.id",
     "headers": []
   },
   {
@@ -1383,16 +1367,6 @@
     "logo": "https://d229kpbsb5jevy.cloudfront.net/timesplay/content/common/logos/channel/logos/vunjev.jpeg",
     "grup": "Premium Movies",
     "tvgId": "auto.mnx",
-    "headers": []
-  },
-  {
-    "nama": "History HD",
-    "urls": [
-      "https://cdnbal1.indihometv.com/atm/DASH/history/history-avc1_2500000=7-3277707030000000.mpd"
-    ],
-    "logo": "https://upload.wikimedia.org/wikipedia/commons/a/af/HistoryHD_Logo_2015_4C_Black_type.png",
-    "grup": "Knowledge and Documentary",
-    "tvgId": "History.id",
     "headers": []
   },
   {
@@ -1596,6 +1570,17 @@
     "logo": "https://www.visionplus.id/images/repository/960/49960-SNAPSHOT-l.png",
     "grup": "Sports",
     "tvgId": "SPOTV2.id",
+    "headers": []
+  },
+  {
+    "nama": "ABC Australia (V+)",
+    "urls": [
+      "https://d2gr3zenqo3tg4.cloudfront.net/out/v1/6c075b570f99473fa6715bb399bc9571/index.mpd",
+      "https://cdnjktcyber05.transvision.co.id/riutx01-439abf566997b187117993103dfd8508/dash/QUJDIEF1c3RyYWxpYQ/manifest.mpd"
+    ],
+    "logo": "https://raw.githubusercontent.com/apistech/project/refs/heads/main/logo/image_ch_abcaustrlia.png",
+    "grup": "Entertainment & LifeStyle",
+    "tvgId": "ABCAustralia.au@SD",
     "headers": []
   },
   {
@@ -2820,7 +2805,7 @@
     "headers": []
   },
   {
-    "nama": "Love Nature (V+)",
+    "nama": "Love Nature (Indihome)",
     "urls": [
       "https://cdnbal1.indihometv.com/atm/DASH/lovenature/lovenature-avc1_2500000=7-3277707030000000.mpd"
     ],
