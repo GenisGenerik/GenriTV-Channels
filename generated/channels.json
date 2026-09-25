@@ -67,19 +67,6 @@
     "headers": []
   },
   {
-    "nama": "Indosiar HD",
-    "urls": [
-      "https://op-flashcon-digdayahd-1.dens.tv/h/h207/01.m3u8",
-      "http://filex.me:8080//@singh_tesla_7207492/puWnhEGsXpK3/302264.m3u8",
-      "https://vidsemar.pages.dev/terraluna2/205.mpd",
-      "https://cdnjktcyber05.transvision.co.id/riutx01-439abf566997b187117993103dfd8508/dash/SW5kb3NpYXI/manifest.mpd"
-    ],
-    "logo": "https://thumbor.prod.vidiocdn.com/0plBZ7Gso7gNBJxid9ksA8HMGxc=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/205/54ab19.png",
-    "grup": "Indonesia Channels",
-    "tvgId": "Indosiar.id",
-    "headers": []
-  },
-  {
     "nama": "TransTV HD",
     "urls": [
       "http://119.82.250.109:8080/nl.m3u8?id=1145",
@@ -113,6 +100,18 @@
     "logo": "https://thumbor.prod.vidiocdn.com/Pf8yLSfHEUZeRI9tUzLDR2U8Zow=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/874/042ca3.png",
     "grup": "Indonesia Channels",
     "tvgId": "KompasTV.id",
+    "headers": []
+  },
+  {
+    "nama": "Indosiar HD",
+    "urls": [
+      "https://op-flashcon-digdayahd-1.dens.tv/h/h207/01.m3u8",
+      "https://vidsemar.pages.dev/terraluna2/205.mpd",
+      "https://cdnjktcyber05.transvision.co.id/riutx01-439abf566997b187117993103dfd8508/dash/SW5kb3NpYXI/manifest.mpd"
+    ],
+    "logo": "https://thumbor.prod.vidiocdn.com/0plBZ7Gso7gNBJxid9ksA8HMGxc=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/205/54ab19.png",
+    "grup": "Indonesia Channels",
+    "tvgId": "Indosiar.id",
     "headers": []
   },
   {
@@ -480,9 +479,9 @@
     "headers": []
   },
   {
-    "nama": "SindoNews",
+    "nama": "SindoNews (V+)",
     "urls": [
-      "https://cilok99.serv00.net/ythls/xxxx.py/play.m3u8?id=UCGfXjFgIUUTUUlzdG6BenXA"
+      "https://d43tg978oium5.cloudfront.net/out/v1/8c2df39f9b2842fbb997b89378841ad9/index.mpd"
     ],
     "logo": "https://nabelsakha.com/wp-content/uploads/2023/10/Sindonews.png",
     "grup": "Indonesia Channels",
@@ -1070,16 +1069,6 @@
     "headers": []
   },
   {
-    "nama": "CCTV 4 (Transcorp)",
-    "urls": [
-      "https://cdnjktcyber05.transvision.co.id/riutx01-439abf566997b187117993103dfd8508/dash/Q0NUViA0/manifest.mpd"
-    ],
-    "logo": "https://static.wikia.nocookie.net/logopedia/images/3/38/Cctv_4_america.png/revision/latest/scale-to-width-down/250?cb=20200119091533",
-    "grup": "China",
-    "tvgId": "CCTV4",
-    "headers": []
-  },
-  {
     "nama": "CBS Golazo Network",
     "urls": [
       "https://stitcher.pluto.tv/stitch/hls/channel/63a0e33a45264d000850ed7e/master.m3u8?deviceType=web&servertSideAds=false&deviceMake=safari&deviceVersion=1&deviceId=spencer&appVersion=1&deviceDNT=0&deviceModel=web&sid=cb5874fc-6948-11ef-b8e3-ea3db3d97a96"
@@ -1570,6 +1559,17 @@
     "logo": "https://www.visionplus.id/images/repository/960/49960-SNAPSHOT-l.png",
     "grup": "Sports",
     "tvgId": "SPOTV2.id",
+    "headers": []
+  },
+  {
+    "nama": "NHK World Japan (V+)",
+    "urls": [
+      "https://d3rzhldmr21hry.cloudfront.net/out/v1/8decf3562fe943e88872ef868d6fb6a5/index.mpd",
+      "https://media-tyo.hls.nhkworld.jp/hls/w/live/master.m3u8"
+    ],
+    "logo": "https://raw.githubusercontent.com/apistech/project/refs/heads/main/logo/image_ch_nhkworldjapan.png",
+    "grup": "News",
+    "tvgId": "NHKWorldJapan.id",
     "headers": []
   },
   {
@@ -2185,16 +2185,6 @@
     "headers": []
   },
   {
-    "nama": "Sanlih",
-    "urls": [
-      "https://visionplus.fazznet.my.id/out/v1/a82a32a7b69f40f58ae25d619548d215/index.mpd"
-    ],
-    "logo": "https://www.visionplus.id/images/repository/548/604548-LOGO-m.png",
-    "grup": "China",
-    "tvgId": "SETTaiwan.tw@SD",
-    "headers": []
-  },
-  {
     "nama": "Salira TV",
     "urls": [
       "https://live.salira.tv/p/3870/hybrid/play.m3u8"
@@ -2502,16 +2492,6 @@
     "logo": "https://static.wikia.nocookie.net/logopedia/images/e/e8/Nagaswara-FM-Cirebon.png",
     "grup": "Internet Radio",
     "tvgId": "auto.nagaswara.fm",
-    "headers": []
-  },
-  {
-    "nama": "NHK World Japan (Channel Feed)",
-    "urls": [
-      "https://media-tyo.hls.nhkworld.jp/hls/w/live/master.m3u8"
-    ],
-    "logo": "https://www.mncvision.id/userfiles/image/channel/channel_355.jpeg",
-    "grup": "News",
-    "tvgId": "NHKWorldJapan.id",
     "headers": []
   },
   {
@@ -3002,16 +2982,6 @@
     "logo": "https://i.imgur.com/VEqQfTu.png",
     "grup": "Local Channels",
     "tvgId": "JogjaIstimewaTV.id@SD",
-    "headers": []
-  },
-  {
-    "nama": "Jiangsu TV (V+)",
-    "urls": [
-      "https://visionplus.fazznet.my.id/out/v1/ccc51c0317284496b6cde9f7bd670b80/index.mpd"
-    ],
-    "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/d/dc/Jiangsu_Broadcasting_Corporation.svg/800px-Jiangsu_Broadcasting_Corporation.svg.png",
-    "grup": "China",
-    "tvgId": "Jiangsu TV",
     "headers": []
   },
   {
@@ -4332,6 +4302,16 @@
     "logo": "https://i.imgur.com/SRFzjja.png",
     "grup": "Italy Channels",
     "tvgId": "CafeTV24.it@SD",
+    "headers": []
+  },
+  {
+    "nama": "Cablenoticias (1080p)",
+    "urls": [
+      "http://181.78.211.244:8005/play/a09u/index.m3u8"
+    ],
+    "logo": "https://i.imgur.com/FfhOGR9.png",
+    "grup": "Colombia",
+    "tvgId": "Cablenoticias.co@SD",
     "headers": []
   },
   {
