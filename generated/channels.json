@@ -3,37 +3,35 @@
     "nama": "TVRI Nasional",
     "urls": [
       "https://ott-balancer.tvri.go.id/live/eds/Nasional/hls/Nasional.m3u8",
-      "https://ott-balancer.tvri.go.id/live/eds/NTB/hls/NTB.m3u8",
-      "https://ott-balancer.tvri.go.id/live/eds/NTT/hls/NTT.m3u8",
       "https://ott-balancer.tvri.go.id/live/eds/Aceh/hls/Aceh.m3u8",
-      "https://ott-balancer.tvri.go.id/live/eds/Sumut/hls/Sumut.m3u8",
-      "https://ott-balancer.tvri.go.id/live/eds/Sumbar/hls/Sumbar.m3u8",
-      "https://ott-balancer.tvri.go.id/live/eds/Riau/hlstl/Riau.m3u8",
-      "https://ott-balancer.tvri.go.id/live/eds/Riau/hls/Riau.m3u8",
-      "https://ott-balancer.tvri.go.id/live/eds/Jambi/hls/Jambi.m3u8",
-      "https://ott-balancer.tvri.go.id/live/eds/Sumsel/hls/Sumsel.m3u8",
+      "https://ott-balancer.tvri.go.id/live/eds/Bali/hls/Bali.m3u8",
       "https://ott-balancer.tvri.go.id/live/eds/Babel/hls/Babel.m3u8",
       "https://ott-balancer.tvri.go.id/live/eds/Bengkulu/hls/Bengkulu.m3u8",
-      "https://ott-balancer.tvri.go.id/live/eds/Lampung/hls/Lampung.m3u8",
-      "https://ott-balancer.tvri.go.id/live/eds/DKI/hls/DKI.m3u8",
+      "https://ott-balancer.tvri.go.id/live/eds/Gorontalo/hls/Gorontalo.m3u8",
+      "https://ott-balancer.tvri.go.id/live/eds/Jambi/hls/Jambi.m3u8",
       "https://ott-balancer.tvri.go.id/live/eds/Jabar/hls/Jabar.m3u8",
       "https://ott-balancer.tvri.go.id/live/eds/Jateng/hls/Jateng.m3u8",
-      "https://ott-balancer.tvri.go.id/live/eds/Jogjakarta/hls/Jogjakarta.m3u8",
       "https://ott-balancer.tvri.go.id/live/eds/Jatim/hls/Jatim.m3u8",
-      "https://ott-balancer.tvri.go.id/live/eds/Bali/hls/Bali.m3u8",
       "https://ott-balancer.tvri.go.id/live/eds/Kalbar/hls/Kalbar.m3u8",
-      "https://ott-balancer.tvri.go.id/live/eds/Kalteng/hls/Kalteng.m3u8",
       "https://ott-balancer.tvri.go.id/live/eds/Kalsel/hls/Kalsel.m3u8",
+      "https://ott-balancer.tvri.go.id/live/eds/Kalteng/hls/Kalteng.m3u8",
       "https://ott-balancer.tvri.go.id/live/eds/Kaltim/hls/Kaltim.m3u8",
+      "https://ott-balancer.tvri.go.id/live/eds/Lampung/hls/Lampung.m3u8",
+      "https://ott-balancer.tvri.go.id/live/eds/Ambon/hls/Ambon.m3u8",
       "https://ott-balancer.tvri.go.id/live/eds/Sulut/hls/Sulut.m3u8",
-      "https://ott-balancer.tvri.go.id/live/eds/Gorontalo/hls/Gorontalo.m3u8",
-      "https://ott-balancer.tvri.go.id/live/eds/Sulteng/hls/Sulteng.m3u8",
+      "https://ott-balancer.tvri.go.id/live/eds/Sumut/hls/Sumut.m3u8",
+      "https://ott-balancer.tvri.go.id/live/eds/NTB/hls/NTB.m3u8",
+      "https://ott-balancer.tvri.go.id/live/eds/NTT/hls/NTT.m3u8",
+      "https://ott-balancer.tvri.go.id/live/eds/Papua/hls/Papua.m3u8",
+      "https://ott-balancer.tvri.go.id/live/eds/Riau/hls/Riau.m3u8",
       "https://ott-balancer.tvri.go.id/live/eds/Sulbar/hls/Sulbar.m3u8",
       "https://ott-balancer.tvri.go.id/live/eds/Sulsel/hls/Sulsel.m3u8",
+      "https://ott-balancer.tvri.go.id/live/eds/Sulteng/hls/Sulteng.m3u8",
       "https://ott-balancer.tvri.go.id/live/eds/Sultra/hls/Sultra.m3u8",
-      "https://ott-balancer.tvri.go.id/live/eds/Ambon/hls/Ambon.m3u8",
-      "https://ott-balancer.tvri.go.id/live/eds/Papua/hls/Papua.m3u8",
-      "https://ott-balancer.tvri.go.id/live/eds/Pabar/hls/Pabar.m3u8"
+      "https://ott-balancer.tvri.go.id/live/eds/Sumbar/hls/Sumbar.m3u8",
+      "https://ott-balancer.tvri.go.id/live/eds/Sumsel/hls/Sumsel.m3u8",
+      "https://ott-balancer.tvri.go.id/live/eds/Pabar/hls/Pabar.m3u8",
+      "https://ott-balancer.tvri.go.id/live/eds/Jogjakarta/hls/Jogjakarta.m3u8"
     ],
     "logo": "https://thumbor.prod.vidiocdn.com/F6W__Y0wn_7mFW0cOuz7mi7qjWU=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/6441/528cc9.png",
     "grup": "Indonesia Channels",
@@ -296,6 +294,17 @@
     "logo": "https://img.favpng.com/5/15/14/beritasatu-com-logo-beritasatu-media-holdings-news-png-favpng-ascxjWXRYnY9w2tGEsZusEmJa.jpg",
     "grup": "Indonesia Channels",
     "tvgId": "BTV.id@SD",
+    "headers": []
+  },
+  {
+    "nama": "AXN (Transcorp)",
+    "urls": [
+      "https://cdnjktcyber05.transvision.co.id/riutx01-439abf566997b187117993103dfd8508/dash/QVhOLW15/manifest.mpd",
+      "https://cdnbal1.indihometv.com/atm/DASH/axn/axn-avc1_2500000=7-3277707030000000.mpd"
+    ],
+    "logo": "https://static.wikia.nocookie.net/logopedia/images/b/bb/AXN_2011.png/revision/latest?cb=20201126072546",
+    "grup": "Premium Movies",
+    "tvgId": "AXN.id",
     "headers": []
   },
   {
@@ -839,6 +848,16 @@
     "headers": []
   },
   {
+    "nama": "Flik",
+    "urls": [
+      "http://filex.me:8080/akkvdGtMUWkvVnMvaWx3V2hXa2NaZy9CTmYrVG13Z0pQVjFaRjhoMzNzRmc5clJBTG9XQ2huYTFZZVpTVVBDVA"
+    ],
+    "logo": "https://warningfm.github.io/v3/img/XQvrxhl.png?v=1.1.1.1",
+    "grup": "Indonesian Entertainment & Movies",
+    "tvgId": "Flik.id",
+    "headers": []
+  },
+  {
     "nama": "FilAmTV Network (1080p)",
     "urls": [
       "https://cdn.vegasplus.us/vegas/ftv/playlist.m3u8"
@@ -1199,16 +1218,6 @@
     "headers": []
   },
   {
-    "nama": "AXN (Transcorp)",
-    "urls": [
-      "https://cdnjktcyber05.transvision.co.id/riutx01-439abf566997b187117993103dfd8508/dash/QVhOLW15/manifest.mpd"
-    ],
-    "logo": "https://static.wikia.nocookie.net/logopedia/images/b/bb/AXN_2011.png/revision/latest?cb=20201126072546",
-    "grup": "Premium Movies",
-    "tvgId": "AXN.id",
-    "headers": []
-  },
-  {
     "nama": "3ABN Proclaim! Network",
     "urls": [
       "https://3abn.bozztv.com/3abn2/Pro_live/smil:Pro_live.smil/playlist.m3u8"
@@ -1356,6 +1365,16 @@
     "logo": "https://d229kpbsb5jevy.cloudfront.net/timesplay/content/common/logos/channel/logos/vunjev.jpeg",
     "grup": "Premium Movies",
     "tvgId": "auto.mnx",
+    "headers": []
+  },
+  {
+    "nama": "History HD (Maxstream)",
+    "urls": [
+      "https://cdnbal1.indihometv.com/atm/DASH/history/history-avc1_2500000=7-3277707030000000.mpd"
+    ],
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/a/af/HistoryHD_Logo_2015_4C_Black_type.png",
+    "grup": "Knowledge and Documentary",
+    "tvgId": "History.id",
     "headers": []
   },
   {
@@ -2375,16 +2394,6 @@
     "headers": []
   },
   {
-    "nama": "Premier Sports 2 (Philippines) (1080p)",
-    "urls": [
-      "https://amg19223-amg19223c4-amgplt0351.playout.now3.amagi.tv/playlist/amg19223-amg19223c4-amgplt0351/playlist.m3u8"
-    ],
-    "logo": "https://i.imgur.com/UQeXWd2.png",
-    "grup": "Philippines",
-    "tvgId": "PremierSports2.ph@SD",
-    "headers": []
-  },
-  {
     "nama": "PowerNation (1080p)",
     "urls": [
       "https://amg01258-raycomsports-powernationau-samsungau-18bwc.amagi.tv/playlist.m3u8"
@@ -2615,6 +2624,16 @@
     "headers": []
   },
   {
+    "nama": "Mentari TV (Vidio)",
+    "urls": [
+      "https://vidsemar.pages.dev/terraluna2/8237.mpd"
+    ],
+    "logo": "https://thumbor.prod.vidiocdn.com/59CZO-IVdps6hUK6gEQqn-w-bCw=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/8237/18585d.png",
+    "grup": "Kids",
+    "tvgId": "MentariTV.id@SD",
+    "headers": []
+  },
+  {
     "nama": "Mazzika (576p)",
     "urls": [
       "http://149.100.11.235:8080/Mazzika/index.m3u8"
@@ -2815,6 +2834,16 @@
     "headers": []
   },
   {
+    "nama": "Lifetime (Maxstream)",
+    "urls": [
+      "https://cdnbal1.indihometv.com/atm/DASH/lifetime/lifetime-avc1_2500000=7-3277707030000000.mpd"
+    ],
+    "logo": "https://1000logos.net/wp-content/uploads/2025/07/Lifetime-Logo.png",
+    "grup": "Entertainment & LifeStyle",
+    "tvgId": "Lifetime.id",
+    "headers": []
+  },
+  {
     "nama": "LN24SA (1080p)",
     "urls": [
       "https://cdnstack.internetmultimediaonline.org/ln24/ln24.stream/playlist.m3u8"
@@ -2962,6 +2991,16 @@
     "logo": "https://cdn88-accio.its-newid.net/channel/newid_008/lg_channels/img/channel_logo/default/channel_logo.png",
     "grup": "Korea",
     "tvgId": "auto.k.drama",
+    "headers": []
+  },
+  {
+    "nama": "K Plus (Maxstream)",
+    "urls": [
+      "https://cdnbal1.indihometv.com/atm/DASH/kplus/kplus-avc1_2500000=7-3277707030000000.mpd"
+    ],
+    "logo": "https://raw.githubusercontent.com/apistech/project/refs/heads/main/logo/image_ch_kplus.png",
+    "grup": "Korea",
+    "tvgId": "KPlus.sg@SD",
     "headers": []
   },
   {
@@ -4225,16 +4264,6 @@
     "headers": []
   },
   {
-    "nama": "Canal 5 TV Cozumel (1080p)",
-    "urls": [
-      "https://video0.rogohosting.com:19360/tvcozumel/tvcozumel.m3u8"
-    ],
-    "logo": "https://i.imgur.com/0nzNMuP.jpeg",
-    "grup": "Mexico",
-    "tvgId": "Canal5TVCozumel.mx@SD",
-    "headers": []
-  },
-  {
     "nama": "Canal 5 (Mexico) (1080p)",
     "urls": [
       "http://45.181.87.106/CANAL5HD/index.m3u8"
@@ -4642,6 +4671,16 @@
     "logo": "https://i.imgur.com/nCWgp38.png",
     "grup": "Bangladesh",
     "tvgId": "BanglaVision.bd@SD",
+    "headers": []
+  },
+  {
+    "nama": "Bandamax (1080p)",
+    "urls": [
+      "http://181.78.106.127:5000/play/ca064/index.m3u8"
+    ],
+    "logo": "https://i.imgur.com/4DfnOTA.png",
+    "grup": "Mexico",
+    "tvgId": "Bandamax.mx@SD",
     "headers": []
   },
   {
@@ -5382,6 +5421,16 @@
     "logo": "https://i.imgur.com/kNrzk3X.png",
     "grup": "Italy Channels",
     "tvgId": "Antenna2TV.it@SD",
+    "headers": []
+  },
+  {
+    "nama": "Animax (Maxstream)",
+    "urls": [
+      "https://cdnbal1.indihometv.com/atm/DASH/animax/animax-avc1_2500000=7-3277707030000000.mpd"
+    ],
+    "logo": "https://w7.pngwing.com/pngs/386/630/png-transparent-animax-sony-yay-anime-television-sony-s-networks-india-ebay-korea-co-ltd-blue-text-trademark.png",
+    "grup": "Kids",
+    "tvgId": "Animax.id",
     "headers": []
   },
   {
@@ -6245,6 +6294,16 @@
     "headers": []
   },
   {
+    "nama": "AXN Latin America South (1080p)",
+    "urls": [
+      "http://181.78.12.119:16123/play/ch46/index.m3u8"
+    ],
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/AXN_logo_%282015%29.svg/960px-AXN_logo_%282015%29.svg.png",
+    "grup": "Argentina",
+    "tvgId": "AXNLatinAmerica.us@South",
+    "headers": []
+  },
+  {
     "nama": "AXN Asia Thailand (720p)",
     "urls": [
       "http://58.8.186.128:10007/bysid/2814"
@@ -6252,6 +6311,16 @@
     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/AXN_logo_%282015%29.svg/960px-AXN_logo_%282015%29.svg.png",
     "grup": "Thailand",
     "tvgId": "AXNAsia.sg@Thailand",
+    "headers": []
+  },
+  {
+    "nama": "AXN Asia Philippines (576p)",
+    "urls": [
+      "https://sra72yz.s.gy/AXN_ASIA_PHILIPPINES.m3u8"
+    ],
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/AXN_logo_%282015%29.svg/960px-AXN_logo_%282015%29.svg.png",
+    "grup": "Philippines",
+    "tvgId": "AXNAsia.sg@Philippines",
     "headers": []
   },
   {
