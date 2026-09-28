@@ -1105,8 +1105,8 @@ http://58.8.186.128:10003/bysid/2333
 https://s2129134.cdn.mytvnet.vn/pkg20/live_dzones/bbclifestyle.smil/manifest.mpd
 #EXTINF:-1 tvg-id="BBCFourCBeebies.uk@HD" group-title="United Kingdom" tvg-logo="https://i.imgur.com/aH0PCPy.png",BBC Four/CBeebies (720p)
 http://193.46.58.239:8080/CbeebiesHD/index.m3u8
-#EXTINF:-1 tvg-id="BBCFour.uk@UK" group-title="United Kingdom" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/BBC_Four_logo_2021.svg/960px-BBC_Four_logo_2021.svg.png",BBC Four (720p) [Geo-blocked]
-https://vs-cmaf-pushb-uk.live.fastly.md.bbci.co.uk/x=4/i=urn:bbc:pips:service:bbc_four_hd/iptv_hd_abr_v1.mpd
+#EXTINF:-1 tvg-id="BBCFour.uk@UK" group-title="United Kingdom" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/BBC_Four_logo_2021.svg/960px-BBC_Four_logo_2021.svg.png",BBC Four
+https://cdn.stmify.com/bbc/stream/BBC_FOUR/hevc_iptv_mse_v0.mpd
 #EXTINF:-1 tvg-id="BBCFirst.uk@Turkiye" group-title="Turkey" tvg-logo="https://i.imgur.com/UBoBYUI.png",BBC First Turkiye
 http://88.212.15.29/live/bbc_first/index.m3u8
 #EXTINF:-1 tvg-id="bbc.earth.hungary" group-title="Documentary Channels" tvg-logo="https://i.imgur.com/o0DSsY1.png",BBC Earth Hungary
@@ -1115,8 +1115,8 @@ http://88.212.15.19/live/bbce_hun/index.m3u8
 http://88.212.15.29/live/test_bbc_eartch_hevc/playlist.m3u8
 #EXTINF:-1 tvg-id="bbc.earth" group-title="Documentary Channels" tvg-logo="https://i.imgur.com/o0DSsY1.png",BBC Earth (1080p)
 https://amg00793-amg00793c6-xumo-us-2669.playouts.now.amagi.tv/BBCStudios-BBCEarthA-hls/playlist.m3u8
-#EXTINF:-1 tvg-id="BBCAlba.uk@SD" group-title="United Kingdom" tvg-logo="https://i.imgur.com/36KDxLg.png",BBC Alba [Geo-blocked]
-https://vs-cmaf-pushb-uk-live.akamaized.net/x=4/i=urn:bbc:pips:service:bbc_alba/hevc_iptv_mse_v0.mpd
+#EXTINF:-1 tvg-id="BBCAlba.uk@SD" group-title="United Kingdom" tvg-logo="https://i.imgur.com/36KDxLg.png",BBC Alba
+https://cdn.stmify.com/bbc/stream/BBC_ALBA/hevc_iptv_mse_v0.mpd
 #EXTINF:-1 tvg-id="AzzurraTV.it@SD" group-title="Italy Channels" tvg-logo="https://i.imgur.com/qWIZNEc.png",Azzurra TV (576p)
 https://ed05.top-ix.org/avtvlive/azzurra/streaming/playlist.m3u8
 #EXTINF:-1 tvg-id="AztecaInternacional.mx@SD" group-title="Mexico" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/e/eb/Azteca_Internacional_logo_2023.png",Azteca Internacional (1080p)

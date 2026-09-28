@@ -4954,9 +4954,9 @@
     "headers": []
   },
   {
-    "nama": "BBC Four (720p) [Geo-blocked]",
+    "nama": "BBC Four",
     "urls": [
-      "https://vs-cmaf-pushb-uk.live.fastly.md.bbci.co.uk/x=4/i=urn:bbc:pips:service:bbc_four_hd/iptv_hd_abr_v1.mpd"
+      "https://cdn.stmify.com/bbc/stream/BBC_FOUR/hevc_iptv_mse_v0.mpd"
     ],
     "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/BBC_Four_logo_2021.svg/960px-BBC_Four_logo_2021.svg.png",
     "grup": "United Kingdom",
@@ -5004,9 +5004,9 @@
     "headers": []
   },
   {
-    "nama": "BBC Alba [Geo-blocked]",
+    "nama": "BBC Alba",
     "urls": [
-      "https://vs-cmaf-pushb-uk-live.akamaized.net/x=4/i=urn:bbc:pips:service:bbc_alba/hevc_iptv_mse_v0.mpd"
+      "https://cdn.stmify.com/bbc/stream/BBC_ALBA/hevc_iptv_mse_v0.mpd"
     ],
     "logo": "https://i.imgur.com/36KDxLg.png",
     "grup": "United Kingdom",
